@@ -9,8 +9,7 @@
 
 #include <QObject>
 #include <QQmlEngine>
-
-class QWindow;
+#include <QWindow> // moc needs the full type for Q_INVOKABLE pointer arguments
 
 // Window helpers for Natsuna that Haruna doesn't have.
 class NatsunaWindowUtils : public QObject
