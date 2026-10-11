@@ -535,11 +535,8 @@ void MpvItem::loadFile(const QString &file)
     const auto title = playlistModel->data(playingIndex, PlaylistModel::Roles::TitleRole).toString();
     const auto filename = playlistModel->data(playingIndex, PlaylistModel::Roles::NameRole).toString();
     const auto itemName = PlaylistSettings::showMediaTitle() ? title : filename;
-    // clang-format off
-    const auto msg = i18nc("%1 current item number, %2 total items count, %3 item name",
-                           "[%1/%2] %3", playingRow + 1, playlistModel->rowCount(), itemName);
-    // clang-format on
-    Q_EMIT osdMessage(msg);
+    // Natsuna: show just the name, centred at the bottom of the video
+    Q_EMIT mediaTitleMessage(itemName);
 }
 
 void MpvItem::loadTracks(const QList<QVariant> &tracks)

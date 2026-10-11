@@ -182,15 +182,25 @@ void Application::setupAboutData()
     m_aboutData.setComponentName(u"natsuna"_s);
     m_aboutData.setDisplayName(i18nc("application title/display name", "Natsuna"));
     m_aboutData.setVersion(Application::version().toUtf8());
-    m_aboutData.setShortDescription(i18nc("@title", "Media player"));
+    m_aboutData.setShortDescription(i18nc("@title", "A simple, clean media player"));
+    m_aboutData.setOtherText(i18nc("@info",
+                                   "Natsuna is a simplified fork of Haruna with more sensible defaults "
+                                   "and a cleaner user interface, built on mpv. "
+                                   "It borrows a few familiar touches from VLC, such as its menu layout "
+                                   "and keyboard shortcuts."));
     m_aboutData.setLicense(KAboutLicense::GPL_V3);
-    m_aboutData.setCopyrightStatement(i18nc("copyright statement, use copyright symbol and en dash for the year range", "© 2019–2025"));
+    m_aboutData.setCopyrightStatement(i18nc("copyright statement, use copyright symbol and en dash for the year range",
+                                            "© 2019–2025 Haruna developers\n© 2026 Natsuna"));
     m_aboutData.setHomepage(u"https://github.com/TormStorm/natsuna"_s);
     m_aboutData.setBugAddress(u"https://github.com/TormStorm/natsuna/issues"_s.toUtf8());
     m_aboutData.setDesktopFileName(u"io.github.tormstorm.natsuna"_s);
 
+    m_aboutData.addAuthor(u"TormStorm"_s,
+                          i18nc("@info:credit", "Natsuna maintainer"),
+                          QString(),
+                          u"https://github.com/TormStorm"_s);
     m_aboutData.addAuthor(i18nc("@info:credit", "George Florea Bănuș"),
-                          i18nc("@info:credit", "Developer"),
+                          i18nc("@info:credit", "Haruna developer"),
                           u"georgefb899@gmail.com"_s,
                           u"https://georgefb.com"_s);
 

@@ -222,6 +222,8 @@ Q_SIGNALS:
     void savePositionToDB(const QString &md5Hash, const QString &path, double position);
     void eofPlayNext();
     void osdMessage(const QString &text);
+    // Natsuna: name of the file that just started, shown at the bottom of the video
+    void mediaTitleMessage(const QString &text);
     void isLocalFileChanged();
     void isVideoChanged();
 

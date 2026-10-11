@@ -253,6 +253,10 @@ ApplicationWindow {
             osd.message(text);
         }
 
+        onMediaTitleMessage: function(text) {
+            osd.titleMessage(text)
+        }
+
         onIsReadyChanged: {
             osd.active = true
             appWindow.initPlaylist()
@@ -261,6 +265,7 @@ ApplicationWindow {
         Osd {
             id: osd
 
+            anchors.fill: parent
             maxWidth: mpv.width
         }
 

@@ -1,24 +1,32 @@
 # Natsuna
 
-Natsuna is a personal fork of [Haruna](https://invent.kde.org/multimedia/haruna), the mpv-based media player from KDE. It keeps everything Haruna does, but with defaults that feel like VLC.
+Natsuna is a simplified fork of [Haruna](https://invent.kde.org/multimedia/haruna), the mpv-based media player from KDE, with more sensible defaults and a cleaner user interface.
 
-It installs and runs alongside Haruna: it has its own name, icon entry, binary (`natsuna`) and settings (`~/.config/natsuna/`).
+It keeps Haruna's playback engine and features, but trims the menus down to what you actually reach for, keeps the controls out of your way, and changes a few defaults that tend to surprise people. A handful of familiar conventions, like the menu layout and keyboard shortcuts, are borrowed from VLC.
+
+Natsuna installs alongside Haruna. It has its own name, app-menu entry, binary (`natsuna`) and settings (`~/.config/natsuna/`), so the two never interfere.
 
 ## What's different from Haruna
 
-**Mouse**
-- A single click on the video does nothing (no accidental pausing).
-- Double-click toggles fullscreen without a pause/play flicker.
-- Middle click plays/pauses.
-- If you set a single-click action yourself, it now waits for the double-click interval, so double-clicking never also fires it.
+### Sensible defaults
 
-**Playlist**
-- No longer slides out when the mouse touches the side of the window.
-- Toggle it with **Ctrl+L** or the playlist button.
+- **Clicking the video does nothing.** No more accidental pauses.
+- **Double-click toggles fullscreen** cleanly, without a pause/play flicker.
+- **Middle click plays/pauses.**
+- **The playlist only opens when you ask for it.** It no longer slides out when the mouse touches the edge of the window. Use Ctrl+L or View → Playlist.
+- If you do set a single-click action yourself, it waits out the double-click interval, so a double-click never also triggers it.
 
-**VLC-style menus**
+### A cleaner interface
 
-The menu bar follows VLC's order. It only contains real Haruna features that VLC's menus also have, so nothing is a VLC name pointing at something different:
+**Control bar.** A fixed bar under the video:
+- Elapsed time sits left of the seek bar, total time on the right. Click the total time to switch to remaining time; your choice is remembered.
+- Below that are Play/Pause, Previous, Stop, Next and Fullscreen, with volume on the right.
+
+**Fullscreen controller.** In fullscreen the controls shrink to a small floating box near the bottom of the screen. It appears when you move the mouse and fades out shortly after the mouse stops.
+
+**File title.** When a file starts, its name is shown for a few seconds at the bottom of the video, with no background box.
+
+**Simpler menus.** One menu bar in a familiar order:
 
 | Menu | Contents |
 |---|---|
@@ -31,22 +39,17 @@ The menu bar follows VLC's order. It only contains real Haruna features that VLC
 | View | Playlist, Always on Top, Menu Bar, Toolbar |
 | Help | About, Report a Bug, Support Haruna Development |
 
-Haruna-only extras (secondary subtitles, A–B loop, rotation, panning, subtitle size/position, frame stepping, transcript and so on) are no longer in the menus. They still work through their keyboard shortcuts, and every one of them can be found and rebound under **Tools → Preferences → Shortcuts**. Secondary subtitles are also still in the toolbar's subtitle button.
+The right-click menu on the video uses the same menus.
 
-The right-click menu on the video is VLC-style too: Play/Pause, Stop, Previous, Next, then the Audio, Video, Subtitle, Playback and View menus.
+Haruna's more specialised extras are no longer in the menus:
+- secondary subtitles, A–B loop, rotation and panning
+- subtitle size and position, frame stepping, the transcript panel
 
-**Always on Top**
+They all still work through their keyboard shortcuts, and you can find and rebind every one under **Tools → Preferences → Shortcuts**. Secondary subtitles are also still available from the toolbar's subtitle button.
 
-View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11, and it's remembered between sessions.
+**Always on Top.** View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11. It's remembered between sessions.
 
-**VLC-style control bar**
-
-- The controls sit in a fixed bar below the video instead of over it.
-- Elapsed time is left of the seek bar, total time is on the right. Click the total time to switch to remaining time (remembered).
-- Second row: Play/Pause, Previous, Stop, Next, Fullscreen, then volume on the right. The playlist button is gone (use View → Playlist or Ctrl+L).
-- In fullscreen the controls become a smaller box centred near the bottom of the screen. It appears whenever you move the mouse and fades out about two seconds after the mouse stops, unless the pointer is over it.
-
-**VLC-style keyboard shortcuts**
+### Keyboard shortcuts
 
 | Key | Action |
 |---|---|
@@ -62,20 +65,20 @@ View → Always on Top keeps the player above other windows. On KDE Plasma it us
 | Shift+S | Screenshot |
 | V / Shift+V | Next / previous subtitle track |
 | B / Shift+B | Next / previous audio track |
-| L | Loop |
+| L | A–B loop |
 | Ctrl+L | Show / hide playlist |
 | Ctrl+N | Open network stream |
 | Ctrl+P | Preferences |
 
-All of these can still be changed under Settings → Shortcuts and Settings → Mouse.
+All shortcuts and mouse actions can be changed under **Tools → Preferences**.
 
 ## Building
 
-Natsuna needs the same dependencies as Haruna (Qt ≥ 6.9, KDE Frameworks ≥ 6.24, mpv/MpvQt, FFmpeg). On a current KDE Plasma distro (Arch, openSUSE Tumbleweed, KDE neon, recent Fedora), installing Haruna's build dependencies is enough.
+Natsuna needs the same dependencies as Haruna: Qt ≥ 6.9, KDE Frameworks ≥ 6.24, mpv/MpvQt and FFmpeg, plus `extra-cmake-modules` to build. On a current KDE Plasma distro (Arch, openSUSE Tumbleweed, KDE neon, recent Fedora), installing Haruna's build dependencies is enough.
 
 ```bash
-git clone https://github.com/TormStorm/natsuna.git
-cd natsuna
+git clone https://github.com/TormStorm/Natsuna.git
+cd Natsuna
 cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/.local"
 cmake --build build -j"$(nproc)"
 
@@ -83,9 +86,11 @@ cmake --build build -j"$(nproc)"
 cmake --install build          # or install to ~/.local (adds it to the app menu)
 ```
 
+To update later, run `git pull` and the `cmake --build` line again.
+
 ## Keeping up to date with Haruna
 
-Natsuna's changes live in a few small commits on top of Haruna, so upstream updates merge in cleanly most of the time.
+Natsuna's changes sit in a small number of commits on top of Haruna, and most of them live in their own files (`src/qml/Natsuna/`, `src/natsuna/`), so Haruna's updates usually merge in cleanly.
 
 **On GitHub:** open the repository page and click **Sync fork → Update branch**.
 
@@ -98,8 +103,13 @@ git merge upstream/master
 git push
 ```
 
-If a merge conflicts, it will almost always be in one of the files touched by the Natsuna commits (shortcut defaults in `src/models/actionsmodel.cpp`, mouse defaults, or the renamed app identity). Keep Haruna's new code and re-apply the Natsuna value.
+If a merge conflicts, it will almost always be in one of these files:
+- the control bar (`src/qml/Footer.qml`)
+- shortcut and mouse defaults
+- the renamed app identity
+
+Keep Haruna's new code and re-apply the Natsuna change.
 
 ## Credits and license
 
-All the real work is Haruna's, by George Florea Bănuș and the KDE community. Natsuna is distributed under the same GPL-3.0-or-later license. Please report Natsuna-specific issues here, not to KDE.
+Natsuna stands on Haruna, by George Florea Bănuș and the KDE community; nearly all of the real work is theirs. Natsuna is distributed under the same GPL-3.0-or-later license. Please report Natsuna-specific issues here rather than to KDE.

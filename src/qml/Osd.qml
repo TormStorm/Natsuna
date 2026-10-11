@@ -44,6 +44,41 @@ Item {
         }
     }
 
+    // Natsuna: the name of the file that just started, centred at the
+    // bottom of the video with no background (like VLC's media title)
+    Label {
+        id: titleLabel
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Kirigami.Units.gridUnit * 2
+        width: Math.min(implicitWidth, root.width - Kirigami.Units.gridUnit * 4)
+        visible: false
+        horizontalAlignment: Text.AlignHCenter
+        elide: Text.ElideMiddle
+        color: "white"
+        style: Text.Outline
+        styleColor: Qt.rgba(0, 0, 0, 0.6)
+        font.pointSize: Math.max(parseInt(GeneralSettings.osdFontSize), 12) * 1.6
+    }
+
+    Timer {
+        id: titleTimer
+
+        interval: 3000
+        onTriggered: titleLabel.visible = false
+    }
+
+    function titleMessage(text: string) : void {
+        if (!root.active || !text || parseInt(GeneralSettings.osdFontSize) === 0) {
+            return
+        }
+
+        titleLabel.text = text
+        titleLabel.visible = true
+        titleTimer.restart()
+    }
+
     Timer {
         id: timer
         running: false
