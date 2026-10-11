@@ -5,48 +5,15 @@
  SPDX-License-Identifier: CC-BY-4.0
  -->
 <component type="desktop-application">
-  <name>Haruna</name>
-  <name xml:lang="ar">هارونا</name>
-  <name xml:lang="ca">Haruna</name>
-  <name xml:lang="ca-valencia">Haruna</name>
-  <name xml:lang="cs">Haruna</name>
-  <name xml:lang="de">Haruna</name>
-  <name xml:lang="en-GB">Haruna</name>
-  <name xml:lang="eo">Haruna</name>
-  <name xml:lang="es">Haruna</name>
-  <name xml:lang="eu">Haruna</name>
-  <name xml:lang="fi">Haruna</name>
-  <name xml:lang="fr">Haruna</name>
-  <name xml:lang="gl">Haruna</name>
-  <name xml:lang="he">Haruna</name>
-  <name xml:lang="ia">Haruna</name>
-  <name xml:lang="id">Haruna</name>
-  <name xml:lang="it">Haruna</name>
-  <name xml:lang="ka">Haruna</name>
-  <name xml:lang="ko">Haruna</name>
-  <name xml:lang="lt">Haruna</name>
-  <name xml:lang="lv">Haruna</name>
-  <name xml:lang="nl">Haruna</name>
-  <name xml:lang="pl">Haruna</name>
-  <name xml:lang="pt-BR">Haruna</name>
-  <name xml:lang="ro">Haruna</name>
-  <name xml:lang="ru">Haruna</name>
-  <name xml:lang="sa">हारून</name>
-  <name xml:lang="sk">Haruna</name>
-  <name xml:lang="sl">Haruna</name>
-  <name xml:lang="sv">Haruna</name>
-  <name xml:lang="tr">Haruna</name>
-  <name xml:lang="uk">Haruna</name>
-  <name xml:lang="zh-CN">Haruna 媒体播放器</name>
-  <name xml:lang="zh-TW">Haruna</name>
-  <id>org.kde.haruna</id>
-  <launchable type="desktop-id">org.kde.haruna.desktop</launchable>
+  <name>Natsuna</name>
+  <id>io.github.tormstorm.natsuna</id>
+  <launchable type="desktop-id">io.github.tormstorm.natsuna.desktop</launchable>
   <metadata_license>CC-BY-4.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  <url type="homepage">https://haruna.kde.org</url>
-  <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?product=haruna</url>
+  <url type="homepage">https://github.com/TormStorm/natsuna</url>
+  <url type="bugtracker">https://github.com/TormStorm/natsuna/issues</url>
   <url type="donation">https://github.com/sponsors/g-fb</url>
-  <url type="vcs-browser">https://invent.kde.org/multimedia/haruna</url>
+  <url type="vcs-browser">https://github.com/TormStorm/natsuna</url>
   <summary>Media player</summary>
   <summary xml:lang="ar">مشغل وسائط</summary>
   <summary xml:lang="ca">Reproductor multimèdia</summary>

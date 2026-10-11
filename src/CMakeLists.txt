@@ -10,6 +10,8 @@ ecm_add_app_icon(ICONS_SRCS ICONS ${DATA_ICONS})
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(haruna)
+# Natsuna: keep the upstream target name (fewer merge conflicts), rename the binary
+set_target_properties(haruna PROPERTIES OUTPUT_NAME natsuna)
 
 target_sources(haruna
     PRIVATE

@@ -43,7 +43,7 @@ ApplicationWindow {
     objectName: "HarunaMainWindow"
 
     visible: true
-    title: mpv.mediaTitle || KI18n.i18nc("@title:window", "Haruna")
+    title: mpv.mediaTitle || KI18n.i18nc("@title:window", "Natsuna")
     width: 1000
     height: 600
     minimumWidth: 400

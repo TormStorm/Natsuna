@@ -46,7 +46,7 @@ void Worker::makePlaylistThumbnail(const QString &path, int width)
     // figure out absolute path of the thumbnail
     auto md5Hash = QCryptographicHash::hash(file.toString().toUtf8(), QCryptographicHash::Md5);
     QString cacheDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation));
-    QString appDir(u"haruna"_s);
+    QString appDir(u"natsuna"_s);
     QString fileDir(fi.absoluteDir().dirName());
     QString filename(QString::fromUtf8(md5Hash.toHex()).append(u".png"_s));
     QString cachedFilePath = u"%1/%2/%3/%4"_s.arg(cacheDir, appDir, fileDir, filename);

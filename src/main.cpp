@@ -39,9 +39,9 @@ int main(int argc, char *argv[])
     qSetMessagePattern(u"%{function}() : %{message}\n"_s);
 
     QApplication::setOrganizationName(u"KDE"_s);
-    QApplication::setApplicationName(u"Haruna"_s);
+    QApplication::setApplicationName(u"Natsuna"_s);
     QApplication::setOrganizationDomain(u"kde.org"_s);
-    QApplication::setApplicationDisplayName(u"Haruna - Media Player"_s);
+    QApplication::setApplicationDisplayName(u"Natsuna - Media Player"_s);
     QApplication::setApplicationVersion(Application::version());
 
     // required by mpv
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     QIcon::setFallbackThemeName(u"breeze"_s);
 
     QApplication qApplication(argc, argv);
-    QApplication::setWindowIcon(QIcon::fromTheme(u"haruna"_s));
+    QApplication::setWindowIcon(QIcon::fromTheme(u"natsuna"_s));
 
     bool handledByQPT = INITIAL_STYLE != QQuickStyle::name();
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE") && !handledByQPT) {
