@@ -103,10 +103,9 @@ private:
     KSharedConfig::Ptr m_config;
     // clang-format off
     const QMap<QString, QString> m_defaultKeys{
-        {u"Left"_s,       u"playPauseAction"_s},
         {u"Leftx2"_s,     u"toggleFullscreenAction"_s},
         {u"Right"_s,      u"openContextMenuAction"_s},
-        {u"Middle"_s,     u"muteAction"_s},
+        {u"Middle"_s,     u"playPauseAction"_s},
         {u"Forward"_s,    u"seekForwardSmallAction"_s},
         {u"Back"_s,       u"seekBackwardSmallAction"_s},
         {u"ScrollUp"_s,   u"volumeUpAction"_s},

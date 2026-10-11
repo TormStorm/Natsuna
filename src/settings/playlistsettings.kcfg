@@ -38,7 +38,7 @@
       <default>true</default>
     </entry>
     <entry name="CanToggleWithMouse" type="bool">
-      <default>true</default>
+      <default>false</default>
     </entry>
     <entry name="BigFontFullscreen" type="bool">
       <default>true</default>

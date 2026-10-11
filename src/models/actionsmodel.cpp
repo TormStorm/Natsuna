@@ -55,7 +55,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"audioCycleUpAction"_s;
     action.text = i18nc("@action", "Cycle Up Audio Track");
     action.iconName = QString();
-    action.defaultShortcut = Qt::SHIFT | Qt::Key_3;
+    action.defaultShortcut = Qt::Key_B;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -63,7 +63,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"audioCycleDownAction"_s;
     action.text = i18nc("@action", "Cycle Down Audio Track");
     action.iconName = QString();
-    action.defaultShortcut = Qt::SHIFT | Qt::Key_2;
+    action.defaultShortcut = Qt::SHIFT | Qt::Key_B;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -71,7 +71,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"configureAction"_s;
     action.text = i18nc("@action", "Settings");
     action.iconName = u"configure"_s;
-    action.defaultShortcut = Qt::CTRL | Qt::SHIFT | Qt::Key_Comma;
+    action.defaultShortcut = Qt::CTRL | Qt::Key_P;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -191,7 +191,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"stopAction"_s;
     action.text = i18nc("@action", "Stop");
     action.iconName = u"media-playback-stop"_s;
-    action.defaultShortcut = Qt::Key_Stop;
+    action.defaultShortcut = Qt::Key_S;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -199,7 +199,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"playNextAction"_s;
     action.text = i18nc("@action", "Play Next");
     action.iconName = u"media-skip-forward"_s;
-    action.defaultShortcut = Qt::SHIFT | Qt::Key_Period;
+    action.defaultShortcut = Qt::Key_N;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -207,7 +207,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"playPreviousAction"_s;
     action.text = i18nc("@action", "Play Previous");
     action.iconName = u"media-skip-backward"_s;
-    action.defaultShortcut = Qt::SHIFT | Qt::Key_Comma;
+    action.defaultShortcut = Qt::Key_P;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -263,7 +263,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"seekForwardBigAction"_s;
     action.text = i18nc("@action", "Seek Big Step Forward");
     action.iconName = u"media-seek-forward"_s;
-    action.defaultShortcut = Qt::Key_Up;
+    action.defaultShortcut = Qt::CTRL | Qt::Key_Right;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -271,7 +271,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"seekBackwardBigAction"_s;
     action.text = i18nc("@action", "Seek Big Step Backward");
     action.iconName = u"media-seek-backward"_s;
-    action.defaultShortcut = Qt::Key_Down;
+    action.defaultShortcut = Qt::CTRL | Qt::Key_Left;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -295,7 +295,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"seekNextSubtitleAction"_s;
     action.text = i18nc("@action", "Seek To Next Subtitle");
     action.iconName = u"media-seek-forward"_s;
-    action.defaultShortcut = Qt::CTRL | Qt::Key_Right;
+    action.defaultShortcut = Qt::ALT | Qt::Key_Right;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -303,7 +303,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"seekPreviousSubtitleAction"_s;
     action.text = i18nc("@action", "Seek To Previous Subtitle");
     action.iconName = u"media-seek-backward"_s;
-    action.defaultShortcut = Qt::CTRL | Qt::Key_Left;
+    action.defaultShortcut = Qt::ALT | Qt::Key_Left;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -327,7 +327,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"screenshotAction"_s;
     action.text = i18nc("@action", "Screenshot");
     action.iconName = u"image-x-generic"_s;
-    action.defaultShortcut = Qt::Key_S;
+    action.defaultShortcut = Qt::SHIFT | Qt::Key_S;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -391,7 +391,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"subtitleCycleUpAction"_s;
     action.text = i18nc("@action", "Cycle Up Subtitle");
     action.iconName = QString();
-    action.defaultShortcut = Qt::Key_J;
+    action.defaultShortcut = Qt::Key_V;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -399,7 +399,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"subtitleCycleDownAction"_s;
     action.text = i18nc("@action", "Cycle Down Subtitle");
     action.iconName = QString();
-    action.defaultShortcut = Qt::SHIFT | Qt::Key_J;
+    action.defaultShortcut = Qt::SHIFT | Qt::Key_V;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -439,7 +439,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"togglePlaylistAction"_s;
     action.text = i18nc("@action", "Playlist");
     action.iconName = u"view-media-playlist"_s;
-    action.defaultShortcut = Qt::Key_P;
+    action.defaultShortcut = Qt::CTRL | Qt::Key_L;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -447,7 +447,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"toggleTranscriptAction"_s;
     action.text = i18nc("@action", "Toggle Transcript Panel");
     action.iconName = u"text-frame-link"_s;
-    action.defaultShortcut = Qt::CTRL | Qt::Key_P;
+    action.defaultShortcut = Qt::CTRL | Qt::SHIFT | Qt::Key_T;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -503,7 +503,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"volumeUpAction"_s;
     action.text = i18nc("@action", "Volume Up");
     action.iconName = u"audio-volume-high"_s;
-    action.defaultShortcut = Qt::Key_9;
+    action.defaultShortcut = Qt::Key_Up;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;
@@ -511,7 +511,7 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"volumeDownAction"_s;
     action.text = i18nc("@action", "Volume Down");
     action.iconName = u"audio-volume-low"_s;
-    action.defaultShortcut = Qt::Key_0;
+    action.defaultShortcut = Qt::Key_Down;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};
     m_actions << action;

@@ -112,48 +112,61 @@ MpvItem {
             }
         }
 
-        onPressed: function(mouse) {
-            focus = true
-            const model = Models.mouseActionsModel
-            let actionName
-            let modifier = mouse.modifiers
-            if (mouse.button === Qt.LeftButton) {
-                actionName = model.getAction(Qt.LeftButton, modifier)
-            } else if (mouse.button === Qt.MiddleButton) {
-                actionName = model.getAction(Qt.MiddleButton, modifier)
-            } else if (mouse.button === Qt.RightButton) {
-                actionName = model.getAction(Qt.RightButton, modifier)
-            } else if (mouse.button === Qt.ForwardButton) {
-                actionName = model.getAction(Qt.ForwardButton, modifier)
-            } else if (mouse.button === Qt.BackButton) {
-                actionName = model.getAction(Qt.BackButton, modifier)
-            }
+        // Single-click actions are deferred while a double-click is still
+        // possible, so double-clicking (e.g. to go fullscreen) never also
+        // triggers the single-click action (e.g. pause).
+        property string pendingClickAction: ""
 
-            if (actionName) {
+        function actionForButton(button, modifier, isDoubleClick) {
+            const model = Models.mouseActionsModel
+            switch (button) {
+            case Qt.LeftButton:
+            case Qt.MiddleButton:
+            case Qt.RightButton:
+            case Qt.ForwardButton:
+            case Qt.BackButton:
+                return model.getAction(button, modifier, isDoubleClick)
+            }
+            return ""
+        }
+
+        function triggerAction(actionName) {
+            if (actionName && HarunaApp.actions[actionName]) {
                 HarunaApp.actions[actionName].trigger()
             }
         }
 
+        Timer {
+            id: singleClickTimer
+
+            interval: Application.styleHints.mouseDoubleClickInterval
+            onTriggered: {
+                mouseArea.triggerAction(mouseArea.pendingClickAction)
+                mouseArea.pendingClickAction = ""
+            }
+        }
+
+        onPressed: function(mouse) {
+            focus = true
+            const actionName = actionForButton(mouse.button, mouse.modifiers, false)
+            if (!actionName) {
+                return
+            }
+            const doubleAction = actionForButton(mouse.button, mouse.modifiers, true)
+            // context menus should open immediately
+            if (!doubleAction || actionName === "openContextMenuAction") {
+                triggerAction(actionName)
+                return
+            }
+            pendingClickAction = actionName
+            singleClickTimer.restart()
+        }
+
         onDoubleClicked: function(mouse) {
             focus = true
-            const model = Models.mouseActionsModel
-            let actionName
-            let modifier = mouse.modifiers
-            if (mouse.button === Qt.LeftButton) {
-                actionName = model.getAction(Qt.LeftButton, modifier, true)
-            } else if (mouse.button === Qt.MiddleButton) {
-                actionName = model.getAction(Qt.MiddleButton, modifier, true)
-            } else if (mouse.button === Qt.RightButton) {
-                actionName = model.getAction(Qt.RightButton, modifier, true)
-            } else if (mouse.button === Qt.ForwardButton) {
-                actionName = model.getAction(Qt.ForwardButton, modifier, true)
-            } else if (mouse.button === Qt.BackButton) {
-                actionName = model.getAction(Qt.BackButton, modifier, true)
-            }
-
-            if (actionName) {
-                HarunaApp.actions[actionName].trigger()
-            }
+            singleClickTimer.stop()
+            pendingClickAction = ""
+            triggerAction(actionForButton(mouse.button, mouse.modifiers, true))
         }
     }
 

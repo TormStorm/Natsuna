@@ -10,18 +10,14 @@
                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile name="haruna/haruna.conf" />
   <group name="Mouse">
-    <entry name="Left" type="String">
-      <default>playPauseAction</default>
-    </entry>
+    <entry name="Left" type="String"></entry>
     <entry name="Leftx2" type="String">
       <default>toggleFullscreenAction</default>
     </entry>
     <entry name="Middle" type="String">
-      <default>muteAction</default>
+      <default>playPauseAction</default>
     </entry>
-    <entry name="Middlex2" type="String">
-      <default>configureAction</default>
-    </entry>
+    <entry name="Middlex2" type="String"></entry>
     <entry name="Right" type="String">
       <default>openContextMenuAction</default>
     </entry>
