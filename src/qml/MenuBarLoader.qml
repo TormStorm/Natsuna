@@ -37,7 +37,8 @@ Loader {
             return "hidden"
         }
     }
-    sourceComponent: showGlobalMenu ? globalMenuBarComponent : menuBarComponent
+    // Natsuna: always use the in-window, VLC-style menu bar
+    sourceComponent: menuBarComponent
 
     onVisibleChanged: {
         const mainWindow = Window.window as Main
@@ -51,20 +52,22 @@ Loader {
             hoverEnabled: true
             Kirigami.Theme.colorSet: Kirigami.Theme.Header
 
-            FileMenu {}
-            ViewMenu {}
-            PlaybackMenu {}
-            VideoMenu {}
-            SubtitlesMenu {
+            NatsunaMediaMenu {}
+            NatsunaPlaybackMenu {
                 m_mpv: root.m_mpv
             }
-            AudioMenu {
+            NatsunaAudioMenu {
                 m_mpv: root.m_mpv
             }
-            SettingsMenu {
+            NatsunaVideoMenu {}
+            NatsunaSubtitleMenu {
+                m_mpv: root.m_mpv
+            }
+            NatsunaToolsMenu {
                 m_settingsLoader: root.m_settingsLoader
             }
-            HelpMenu {}
+            NatsunaViewMenu {}
+            NatsunaHelpMenu {}
         }
     }
 

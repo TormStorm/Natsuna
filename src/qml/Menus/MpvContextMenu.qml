@@ -41,33 +41,47 @@ Loader {
 
         onClosed: root.active = false
 
-        MenuItem { action: HarunaApp.actions.playPauseAction }
-        MenuItem { action: HarunaApp.actions.playNextAction }
-        MenuItem { action: HarunaApp.actions.playPreviousAction }
-        Menu {
-            title: KI18n.i18nc("@title:menu", "Playback Speed")
-            MenuItem { action: HarunaApp.actions.playbackSpeedIncreaseAction }
-            MenuItem { action: HarunaApp.actions.playbackSpeedDecreaseAction }
-            MenuItem { action: HarunaApp.actions.playbackSpeedResetAction }
+        // Natsuna: VLC-style right-click menu
+        MenuItem {
+            action: HarunaApp.actions.playPauseAction
+            text: root.m_mpv.pause
+                  ? KI18n.i18nc("@action:inmenu", "Play")
+                  : KI18n.i18nc("@action:inmenu", "Pause")
+        }
+        MenuItem { action: HarunaApp.actions.stopAction }
+        MenuItem {
+            action: HarunaApp.actions.playPreviousAction
+            text: KI18n.i18nc("@action:inmenu", "Previous")
+        }
+        MenuItem {
+            action: HarunaApp.actions.playNextAction
+            text: KI18n.i18nc("@action:inmenu", "Next")
         }
 
         MenuSeparator {}
 
-        MenuItem { action: HarunaApp.actions.openFileAction }
-        MenuItem { action: HarunaApp.actions.openUrlAction }
-
-        MenuSeparator {}
-
-        VideoMenu {}
-        AudioMenu {
+        NatsunaAudioMenu {
             m_mpv: root.m_mpv
         }
-        SubtitlesMenu {
+        NatsunaVideoMenu {}
+        NatsunaSubtitleMenu {
             m_mpv: root.m_mpv
         }
+        NatsunaPlaybackMenu {
+            m_mpv: root.m_mpv
+        }
+        NatsunaViewMenu {}
 
         MenuSeparator {}
 
-        MenuItem { action: HarunaApp.actions.configureAction }
+        MenuItem {
+            action: HarunaApp.actions.openFileAction
+            text: KI18n.i18nc("@action:inmenu", "Open File…")
+        }
+        MenuItem {
+            action: HarunaApp.actions.configureAction
+            text: KI18n.i18nc("@action:inmenu", "Preferences")
+        }
+        MenuItem { action: HarunaApp.actions.quitApplicationAction }
     }
 }

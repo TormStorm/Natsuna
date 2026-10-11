@@ -146,6 +146,16 @@ qt_add_qml_module(haruna
         qml/Menus/Global/GlobalVideoMenu.qml
         qml/Menus/Global/GlobalViewMenu.qml
 
+        qml/Natsuna/Menus/NatsunaMediaMenu.qml
+        qml/Natsuna/Menus/NatsunaPlaybackMenu.qml
+        qml/Natsuna/Menus/NatsunaAudioMenu.qml
+        qml/Natsuna/Menus/NatsunaVideoMenu.qml
+        qml/Natsuna/Menus/NatsunaSubtitleMenu.qml
+        qml/Natsuna/Menus/NatsunaToolsMenu.qml
+        qml/Natsuna/Menus/NatsunaViewMenu.qml
+        qml/Natsuna/Menus/NatsunaHelpMenu.qml
+        qml/Natsuna/Menus/NatsunaToggleItem.qml
+
         qml/Settings/DatabaseSettings.qml
         qml/Settings/GeneralSettings.qml
         qml/Settings/PlaybackSettings.qml

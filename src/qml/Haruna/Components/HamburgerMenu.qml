@@ -132,20 +132,22 @@ ToolButton {
             Menu {
                 title: KI18n.i18nc("@title:menu", "&More")
 
-                FileMenu {}
-                ViewMenu {}
-                PlaybackMenu {}
-                VideoMenu {}
-                SubtitlesMenu {
+                NatsunaMediaMenu {}
+                NatsunaPlaybackMenu {
                     m_mpv: root.m_mpv
                 }
-                AudioMenu {
+                NatsunaAudioMenu {
                     m_mpv: root.m_mpv
                 }
-                SettingsMenu {
+                NatsunaVideoMenu {}
+                NatsunaSubtitleMenu {
+                    m_mpv: root.m_mpv
+                }
+                NatsunaToolsMenu {
                     m_settingsLoader: root.m_settingsLoader
                 }
-                HelpMenu {}
+                NatsunaViewMenu {}
+                NatsunaHelpMenu {}
             }
         }
     }

@@ -1,0 +1,40 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Natsuna contributors
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Controls
+
+import org.kde.ki18n
+
+import org.kde.haruna
+import org.kde.haruna.settings
+
+// VLC: View
+Menu {
+    id: root
+
+    title: KI18n.i18nc("@title:menu", "V&iew")
+
+    MenuItem {
+        action: HarunaApp.actions.togglePlaylistAction
+        text: KI18n.i18nc("@action:inmenu", "Playlist")
+    }
+
+    MenuSeparator {}
+
+    NatsunaToggleItem {
+        action: HarunaApp.actions.toggleMenuBarAction
+        text: KI18n.i18nc("@action:inmenu", "Menu Bar")
+        isOn: GeneralSettings.showMenuBar
+    }
+    NatsunaToggleItem {
+        action: HarunaApp.actions.toggleHeaderAction
+        text: KI18n.i18nc("@action:inmenu", "Toolbar")
+        isOn: GeneralSettings.showHeader
+    }
+}

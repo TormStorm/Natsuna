@@ -16,6 +16,25 @@ It installs and runs alongside Haruna: it has its own name, icon entry, binary (
 - No longer slides out when the mouse touches the side of the window.
 - Toggle it with **Ctrl+L** or the playlist button.
 
+**VLC-style menus**
+
+The menu bar follows VLC's order and only contains things VLC's menus have:
+
+| Menu | Contents |
+|---|---|
+| Media | Open File, Open Network Stream, Open Recent Media, Quit |
+| Playback | Chapter, Speed, Jump Forward/Backward, Play/Pause, Stop, Previous, Next |
+| Audio | Audio Track, Increase/Decrease Volume, Mute |
+| Video | Fullscreen, Zoom, Deinterlace, Take Snapshot |
+| Subtitle | Add Subtitle File, Sub Track |
+| Tools | Effects and Filters, Track Synchronization, Customize Shortcuts, Preferences |
+| View | Playlist, Menu Bar, Toolbar |
+| Help | About, Report a Bug, Support Haruna Development |
+
+Haruna-only extras (secondary subtitles, A–B loop, rotation, panning, subtitle size/position, frame stepping, transcript and so on) are no longer in the menus. They still work through their keyboard shortcuts, and every one of them can be found and rebound under **Tools → Preferences → Shortcuts**. Secondary subtitles are also still in the toolbar's subtitle button.
+
+The right-click menu on the video is VLC-style too: Play/Pause, Stop, Previous, Next, then the Audio, Video, Subtitle, Playback and View menus.
+
 **VLC-style keyboard shortcuts**
 
 | Key | Action |
@@ -34,7 +53,8 @@ It installs and runs alongside Haruna: it has its own name, icon entry, binary (
 | B / Shift+B | Next / previous audio track |
 | L | Loop |
 | Ctrl+L | Show / hide playlist |
-| Ctrl+P | Settings |
+| Ctrl+N | Open network stream |
+| Ctrl+P | Preferences |
 
 All of these can still be changed under Settings → Shortcuts and Settings → Mouse.
 
