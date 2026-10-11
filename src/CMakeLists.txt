@@ -184,6 +184,7 @@ target_include_directories(haruna
     PRIVATE
         models
         mpv
+        natsuna
         ${FFMPEG_INCLUDE_DIRS}
 )
 
