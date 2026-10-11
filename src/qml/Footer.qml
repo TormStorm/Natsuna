@@ -57,6 +57,7 @@ Item {
             // briefly show the controls, like VLC does when entering fullscreen
             footer.showFloating()
         } else {
+            hideFooterTimer.stop()
             root.footerState = "visible"
         }
     }
@@ -89,7 +90,8 @@ Item {
                           Kirigami.Units.gridUnit * 45)
                : root.width
 
-        state: root.footerState
+        // Only the floating (fullscreen) controller ever hides
+        state: root.isFloating ? root.footerState : "visible"
         padding: Kirigami.Units.smallSpacing
         leftPadding: Kirigami.Units.largeSpacing
         rightPadding: Kirigami.Units.largeSpacing
@@ -125,6 +127,9 @@ Item {
 
             interval: root.hideDelay
             onTriggered: {
+                if (!root.isFloating) {
+                    return
+                }
                 if (footer.hovered || hamburgerMenu.isOpen || progressBar.chaptersPopupIsOpen
                         || volumeSlider.pressed) {
                     // still in use, check again later
