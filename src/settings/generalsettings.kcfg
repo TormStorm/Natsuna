@@ -78,5 +78,12 @@
     <entry name="ShowExplanatoryToolTips" type="bool">
       <default>true</default>
     </entry>
+    <!-- Natsuna -->
+    <entry name="AlwaysOnTop" type="bool">
+      <default>false</default>
+    </entry>
+    <entry name="ShowRemainingTime" type="bool">
+      <default>false</default>
+    </entry>
   </group>
 </kcfg>

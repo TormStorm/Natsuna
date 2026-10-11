@@ -371,6 +371,20 @@ ApplicationWindow {
         m_settingsLoader: settingsLoader
     }
 
+    // Natsuna: Always on Top (View menu)
+    Connections {
+        target: GeneralSettings
+        function onAlwaysOnTopChanged() {
+            NatsunaWindowUtils.setKeepAbove(appWindow, GeneralSettings.alwaysOnTop)
+        }
+    }
+    Timer {
+        // the window must be on screen before the window manager can keep it above
+        interval: 500
+        running: GeneralSettings.alwaysOnTop
+        onTriggered: NatsunaWindowUtils.setKeepAbove(appWindow, true)
+    }
+
     Actions {
         id: actions
 

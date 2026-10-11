@@ -23,21 +23,6 @@ Menu {
     title: KI18n.i18nc("@title:menu", "&Tools")
 
     MenuItem {
-        text: KI18n.i18nc("@action:inmenu", "Effects and Filters…")
-        icon.name: "adjustlevels"
-        onTriggered: root.m_settingsLoader.openSettingPage(SettingsWindow.Page.Video)
-    }
-
-    Menu {
-        title: KI18n.i18nc("@title:menu", "Track Synchronization")
-
-        MenuItem { action: HarunaApp.actions.subtitleQuickenAction }
-        MenuItem { action: HarunaApp.actions.subtitleDelayAction }
-    }
-
-    MenuSeparator {}
-
-    MenuItem {
         action: HarunaApp.actions.configureShortcutsAction
         text: KI18n.i18nc("@action:inmenu", "Customize Shortcuts…")
     }

@@ -18,7 +18,7 @@ It installs and runs alongside Haruna: it has its own name, icon entry, binary (
 
 **VLC-style menus**
 
-The menu bar follows VLC's order and only contains things VLC's menus have:
+The menu bar follows VLC's order. It only contains real Haruna features that VLC's menus also have, so nothing is a VLC name pointing at something different:
 
 | Menu | Contents |
 |---|---|
@@ -27,13 +27,24 @@ The menu bar follows VLC's order and only contains things VLC's menus have:
 | Audio | Audio Track, Increase/Decrease Volume, Mute |
 | Video | Fullscreen, Zoom, Deinterlace, Take Snapshot |
 | Subtitle | Add Subtitle File, Sub Track |
-| Tools | Effects and Filters, Track Synchronization, Customize Shortcuts, Preferences |
-| View | Playlist, Menu Bar, Toolbar |
+| Tools | Customize Shortcuts, Preferences |
+| View | Playlist, Always on Top, Menu Bar, Toolbar |
 | Help | About, Report a Bug, Support Haruna Development |
 
 Haruna-only extras (secondary subtitles, A–B loop, rotation, panning, subtitle size/position, frame stepping, transcript and so on) are no longer in the menus. They still work through their keyboard shortcuts, and every one of them can be found and rebound under **Tools → Preferences → Shortcuts**. Secondary subtitles are also still in the toolbar's subtitle button.
 
 The right-click menu on the video is VLC-style too: Play/Pause, Stop, Previous, Next, then the Audio, Video, Subtitle, Playback and View menus.
+
+**Always on Top**
+
+View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11, and it's remembered between sessions.
+
+**VLC-style control bar**
+
+- The controls sit in a fixed bar below the video instead of over it.
+- Elapsed time is left of the seek bar, total time is on the right. Click the total time to switch to remaining time (remembered).
+- Second row: Play/Pause, Previous, Stop, Next, Fullscreen, then volume on the right. The playlist button is gone (use View → Playlist or Ctrl+L).
+- In fullscreen the controls become a smaller box centred near the bottom of the screen. It appears whenever you move the mouse and fades out about two seconds after the mouse stops, unless the pointer is over it.
 
 **VLC-style keyboard shortcuts**
 

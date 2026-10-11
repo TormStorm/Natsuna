@@ -34,6 +34,7 @@ target_sources(haruna
     mprisitem.h mprisitem.cpp
     thumbnailimageprovider.h thumbnailimageprovider.cpp
     worker.h worker.cpp
+    natsuna/windowutils.h natsuna/windowutils.cpp
     ${ICONS_SRCS}
 )
 
@@ -86,6 +87,8 @@ if (CMAKE_SYSTEM_NAME IN_LIST DBUS_PLATFORMS)
         PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}
     )
+    # Natsuna: KWin "Keep Above Others" (Always on Top) uses D-Bus
+    target_link_libraries(haruna PRIVATE Qt6::DBus)
 endif()
 
 add_subdirectory(framedecoder)

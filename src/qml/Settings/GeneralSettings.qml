@@ -164,9 +164,11 @@ SettingsBasePage {
         Label {
             text: KI18n.i18nc("@label:listbox", "Show floating footer on")
             Layout.alignment: Qt.AlignRight
+            visible: false // Natsuna: floating controls always appear on mouse movement
         }
 
         RowLayout {
+            visible: false // Natsuna: see above
             ComboBox {
                 textRole: "text"
                 valueRole: "value"
