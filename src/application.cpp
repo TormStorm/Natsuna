@@ -12,6 +12,7 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
+#include <QImage>
 #include <QMimeDatabase>
 #include <QProcess>
 #include <QQmlApplicationEngine>
@@ -188,6 +189,7 @@ void Application::setupAboutData()
                                    "and a cleaner user interface, built on mpv. "
                                    "It borrows a few familiar touches from VLC, such as its menu layout "
                                    "and keyboard shortcuts."));
+    m_aboutData.setProgramLogo(QImage(u":/data/icons/256-apps-natsuna.png"_s));
     m_aboutData.setLicense(KAboutLicense::GPL_V3);
     m_aboutData.setCopyrightStatement(i18nc("copyright statement, use copyright symbol and en dash for the year range",
                                             "© 2019–2025 Haruna developers\n© 2026 Natsuna"));

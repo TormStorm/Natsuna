@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 George Florea Bănuș <georgefb899@gmail.com>
+ * SPDX-FileCopyrightText: 2026 Natsuna contributors
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -21,85 +22,15 @@ SettingsBasePage {
 
     required property MpvVideo m_mpv
 
-    ColumnLayout {
-        id: content
-
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Config file")
-        }
-
-        ConfigFileField {
-            configFile: PathUtils.ConfigFile.Main
-
-            Layout.fillWidth: true
-        }
-
-        Item { Layout.preferredHeight: Kirigami.Units.largeSpacing }
-
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Custom commands config file")
-        }
-
-        ConfigFileField {
-            configFile: PathUtils.ConfigFile.CustomCommands
-
-            Layout.fillWidth: true
-        }
-
-        Item { Layout.preferredHeight: Kirigami.Units.largeSpacing }
-
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Shortcuts config file")
-        }
-
-        ConfigFileField {
-            configFile: PathUtils.ConfigFile.Shortcuts
-
-            Layout.fillWidth: true
-        }
-
-        Item { Layout.preferredHeight: Kirigami.Units.largeSpacing }
-
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Playlists config file")
-        }
-
-        ConfigFileField {
-            configFile: PathUtils.ConfigFile.PlaylistCache
-
-            Layout.fillWidth: true
-        }
-
-        Item { Layout.preferredHeight: Kirigami.Units.largeSpacing }
-
-        Label {
-            text: KI18n.i18nc("@info:usagetip", "If fields are empty that means there is no config file/folder (e.g when using the default settings).")
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            Layout.fillWidth: true
-        }
-
-        Item { Layout.preferredHeight: Kirigami.Units.largeSpacing }
-
-        CheckBox {
-            text: KI18n.i18nc("@option:check", "Enable mpv logging")
-            checked: InformationSettings.mpvLogging
-            visible: false
-            onClicked: {
-                root.m_mpv.setProperty(MpvProperties.Terminal, checked)
-                InformationSettings.mpvLogging = checked
-                InformationSettings.save()
-            }
-        }
-    }
-
-
     component ConfigFileField: Kirigami.ActionTextField {
         id: configFileField
 
         property int configFile: PathUtils.ConfigFile.Main
 
         text: PathUtils.configFilePath(configFile)
+        placeholderText: KI18n.i18nc("@info:placeholder", "Not created yet (using defaults)")
         readOnly: true
+        Layout.fillWidth: true
         rightActions: [
             Kirigami.Action {
                 icon.name: "document-open"
@@ -120,5 +51,53 @@ SettingsBasePage {
                 }
             }
         ]
+    }
+
+    ColumnLayout {
+        spacing: PrefStyle.sectionSpacing
+
+        PrefHeading {
+            text: KI18n.i18nc("@title", "Debug")
+        }
+
+        PrefSection {
+            title: KI18n.i18nc("@title", "Configuration files")
+
+            PrefRow {
+                title: KI18n.i18nc("@label:textbox", "Settings")
+                stacked: true
+
+                ConfigFileField {
+                    configFile: PathUtils.ConfigFile.Main
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@label:textbox", "Custom commands")
+                stacked: true
+
+                ConfigFileField {
+                    configFile: PathUtils.ConfigFile.CustomCommands
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@label:textbox", "Shortcuts")
+                stacked: true
+
+                ConfigFileField {
+                    configFile: PathUtils.ConfigFile.Shortcuts
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@label:textbox", "Playlists")
+                stacked: true
+
+                ConfigFileField {
+                    configFile: PathUtils.ConfigFile.PlaylistCache
+                }
+            }
+        }
     }
 }

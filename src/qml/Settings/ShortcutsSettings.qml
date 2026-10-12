@@ -11,6 +11,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
+import org.kde.ki18n
 import org.kde.kirigami as Kirigami
 import org.kde.kquickcontrols
 import org.kde.haruna
@@ -25,24 +26,24 @@ SettingsBasePage {
         }
     }
 
-    header: ToolBar {
+    header: PrefPageHeader {
         width: parent.width
+        text: KI18n.i18nc("@title", "Shortcuts")
 
-        RowLayout {
-            anchors.fill: parent
+        Kirigami.SearchField {
+            id: searchField
 
-            Kirigami.SearchField {
-                id: searchField
-
-                focus: true
-                onAccepted: Models.proxyActionsModel.setNameFilter(text)
-                Layout.fillWidth: true
-                KeyNavigation.up: actionsListView
-                KeyNavigation.down: actionsListView
-                Component.onCompleted: forceActiveFocus()
-            }
+            focus: true
+            placeholderText: KI18n.i18nc("@info:placeholder", "Search shortcuts…")
+            onTextChanged: Models.proxyActionsModel.setNameFilter(text)
+            onAccepted: Models.proxyActionsModel.setNameFilter(text)
+            Layout.fillWidth: true
+            KeyNavigation.up: actionsListView
+            KeyNavigation.down: actionsListView
+            Component.onCompleted: forceActiveFocus()
         }
     }
+
     ListView {
         id: actionsListView
 
@@ -59,7 +60,9 @@ SettingsBasePage {
             required property string actionIcon
             required property string actionType
 
-            width: actionsListView.width
+            // same centred width as the other preferences pages
+            width: Math.min(actionsListView.width - Kirigami.Units.gridUnit * 2, PrefStyle.contentWidth)
+            x: (actionsListView.width - width) / 2
 
             contentItem: RowLayout {
                 Kirigami.IconTitleSubtitle {

@@ -19,6 +19,11 @@ import org.kde.haruna
 SettingsBasePage {
     id: root
 
+    header: PrefPageHeader {
+        width: parent.width
+        text: KI18n.i18nc("@title", "Mouse")
+    }
+
     signal newMouseActionChanged()
 
     padding: 0

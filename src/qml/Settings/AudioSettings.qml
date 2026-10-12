@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2020 George Florea Bănuș <georgefb899@gmail.com>
+ * SPDX-FileCopyrightText: 2026 Natsuna contributors
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -17,256 +18,198 @@ import org.kde.haruna.settings
 SettingsBasePage {
     id: root
 
-    GridLayout {
-        id: content
+    readonly property string trackPriorityHelp: KI18n.i18nc("@info:tooltip",
+                                                            "Track selection priority:<br>" +
+                                                            "- preferred track id<br>" +
+                                                            "- track matching the preferred language<br>" +
+                                                            "- default track<br>" +
+                                                            "- no track")
 
-        columns: 2
+    ColumnLayout {
+        spacing: PrefStyle.sectionSpacing
 
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Preferred language")
-            Layout.alignment: Qt.AlignRight
+        PrefHeading {
+            text: KI18n.i18nc("@title", "Audio")
         }
 
-        RowLayout {
-            TextField {
-                id: preferredLanguage
+        // ------------------------------------
+        // Volume and tracks
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Volume and tracks")
 
-                text: AudioSettings.preferredLanguage
-                placeholderText: "eng, ger etc."
-                onEditingFinished: save()
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Volume step")
+                description: KI18n.i18nc("@info", "How much the volume changes per key press or scroll.")
 
-                Connections {
-                    target: root
-                    function onSave() {
-                        preferredLanguage.save()
+                SpinBox {
+                    id: volumeStep
+
+                    editable: true
+                    from: 0
+                    to: 100
+                    value: AudioSettings.volumeStep
+                    onValueModified: {
+                        AudioSettings.volumeStep = volumeStep.value
+                        AudioSettings.save()
                     }
                 }
+            }
 
-                function save() {
-                    AudioSettings.preferredLanguage = text
-                    AudioSettings.save()
+            PrefRow {
+                title: KI18n.i18nc("@label:textbox", "Preferred language")
+                description: KI18n.i18nc("@info", "Language codes, for example: eng, ger")
+                help: root.trackPriorityHelp
+
+                TextField {
+                    id: preferredLanguage
+
+                    text: AudioSettings.preferredLanguage
+                    placeholderText: "eng, ger"
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    onEditingFinished: save()
+
+                    Connections {
+                        target: root
+                        function onSave() {
+                            preferredLanguage.save()
+                        }
+                    }
+
+                    function save() {
+                        AudioSettings.preferredLanguage = text
+                        AudioSettings.save()
+                    }
                 }
             }
-            ToolTipButton {
-                toolTipWidth: 400
-                toolTipText: KI18n.i18nc("@info:tooltip",
-                                         "Track selection priority:<br>" +
-                                         "- preferred track id<br>" +
-                                         "- track matching the preferred language<br>" +
-                                         "- default track<br>" +
-                                         "- no track")
-            }
-        }
 
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Preferred track id")
-            Layout.alignment: Qt.AlignRight
-        }
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Preferred track")
+                help: root.trackPriorityHelp
 
-        RowLayout {
-            SpinBox {
-                from: 0
-                to: 100
-                value: AudioSettings.preferredTrack
-                editable: true
-                onValueModified: {
-                    AudioSettings.preferredTrack = value
-                    AudioSettings.save()
+                SpinBox {
+                    from: 0
+                    to: 100
+                    editable: true
+                    value: AudioSettings.preferredTrack
+                    onValueModified: {
+                        AudioSettings.preferredTrack = value
+                        AudioSettings.save()
+                    }
                 }
             }
-            ToolTipButton {
-                toolTipWidth: 400
-                toolTipText: KI18n.i18nc("@info:tooltip",
-                                         "Track selection priority:<br>" +
-                                         "- preferred track id<br>" +
-                                         "- track matching the preferred language<br>" +
-                                         "- default track<br>" +
-                                         "- no track")
-            }
         }
 
-        // Volume Step
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Volume step")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        SpinBox {
-            id: volumeStep
-            editable: true
-            from: 0
-            to: 100
-            value: AudioSettings.volumeStep
-            onValueModified: {
-                AudioSettings.volumeStep = volumeStep.value
-                AudioSettings.save()
-            }
-        }
-
-        // Replay Gain
+        // ------------------------------------
+        // Replay gain
         // See: https://mpv.io/manual/stable/#options-replaygain
-        SettingsHeader {
-            text: KI18n.i18nc("@title", "Replay gain")
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-        }
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Replay gain")
 
-        Label {
-            text: KI18n.i18nc("@label:listbox", "Mode")
-            Layout.alignment: Qt.AlignRight
-        }
-        RowLayout {
-            ComboBox {
-                textRole: "text"
-                valueRole: "value"
-                model: ListModel {
-                    id: replayGainModel
+            PrefRow {
+                title: KI18n.i18nc("@label:listbox", "Mode")
+                help: KI18n.i18nc("@info:tooltip", "Adjust volume gain according to <i>replaygain</i> " +
+                                  "values stored in the file metadata. If set to album gain, " +
+                                  "apply album gain if present and fallback to track gain otherwise.")
+                helpWidth: 450
+
+                ComboBox {
+                    textRole: "text"
+                    valueRole: "value"
+                    model: ListModel {
+                        id: replayGainModel
+                    }
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    Component.onCompleted: {
+                        replayGainModel.append({
+                            text: KI18n.i18nc("@item:listbox replay gain", "Disabled"),
+                            value: "no"
+                        })
+                        replayGainModel.append({
+                            text: KI18n.i18nc("@item:listbox replay gain", "Track"),
+                            value: "track"
+                        })
+                        replayGainModel.append({
+                            text: KI18n.i18nc("@item:listbox replay gain", "Album"),
+                            value: "album"
+                        })
+                        currentIndex = indexOfValue(AudioSettings.replayGain)
+                    }
+
+                    onActivated: function(index) {
+                        AudioSettings.replayGain = model.get(index).value
+                        AudioSettings.save()
+                    }
                 }
-                Component.onCompleted: {
-                    const noAdjustment = {
-                        text: KI18n.i18nc("@item:listbox replay gain", "Disabled"),
-                        value: "no"
-                    }
-                    replayGainModel.append(noAdjustment)
+            }
 
-                    const track = {
-                        text: KI18n.i18nc("@item:listbox replay gain", "Track"),
-                        value: "track"
-                    }
-                    replayGainModel.append(track)
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Prevent clipping")
+                description: KI18n.i18nc("@info", "Lower the gain when it would cause clipping.")
 
-                    const album = {
-                        text: KI18n.i18nc("@item:listbox replay gain", "Album"),
-                        value: "album"
+                Switch {
+                    checked: AudioSettings.replayGainPreventClip
+                    onToggled: {
+                        AudioSettings.replayGainPreventClip = checked
+                        AudioSettings.save()
                     }
-                    replayGainModel.append(album)
-
-                    currentIndex = indexOfValue(AudioSettings.replayGain)
                 }
+            }
 
-                onActivated: function(index) {
-                    AudioSettings.replayGain = model.get(index).value
+            PrefRow {
+                id: preamp
+
+                title: KI18n.i18nc("@label:spinbox", "Preamp (dB)")
+
+                function setPreamp(val) {
+                    AudioSettings.replayGainPreamp = val
                     AudioSettings.save()
                 }
-            }
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip", "Adjust volume gain according to <i>replaygain</i> " +
-                                   "values stored in the file metadata. If set to album gain, " +
-                                   "apply album gain if present and fallback to track gain otherwise.")
-                toolTipWidth: 450
 
-                Layout.preferredHeight: Kirigami.Units.iconSizes.medium
-            }
-        }
+                SpinBox {
+                    editable: true
+                    from: -150
+                    to: 150
+                    value: AudioSettings.replayGainPreamp
+                    onValueModified: preamp.setPreamp(value)
+                }
 
-        // Replay Gain Clip
-        Item { Layout.preferredWidth: 1 }
-        RowLayout {
-            CheckBox {
-                text: KI18n.i18nc("@label:spinbox", "Prevent clipping")
-                checked: AudioSettings.replayGainPreventClip
-                onClicked: {
-                    AudioSettings.replayGainPreventClip = checked
+                PrefResetButton {
+                    onClicked: preamp.setPreamp(0)
+                }
+            }
+
+            PrefRow {
+                id: fallback
+
+                title: KI18n.i18nc("@label:spinbox", "Fallback (dB)")
+                help: KI18n.i18nc("@info:tooltip", "Gain in dB to apply if the file has no replay gain tags.<br><br>" +
+                                  "This setting is in effect only when:<br>" +
+                                  "- the replaygain setting is disabled<br>" +
+                                  "- the replaygain setting is enabled and the file has no replaygain metadata<br>" +
+                                  "If this is in effect, other replaygain settings are ignored.")
+                helpWidth: 450
+
+                function setFallback(val) {
+                    AudioSettings.replayGainFallback = val
                     AudioSettings.save()
                 }
-            }
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip", "Prevent clipping by lowering the gain")
-                toolTipWidth: 450
 
-                Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                SpinBox {
+                    editable: true
+                    from: -200
+                    to: 60
+                    value: AudioSettings.replayGainFallback
+                    onValueModified: fallback.setFallback(value)
+                }
+
+                PrefResetButton {
+                    onClicked: fallback.setFallback(0)
+                }
             }
         }
 
-        // Replay Gain Preamp
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Preamp (dB)")
-            Layout.alignment: Qt.AlignRight
-        }
-        RowLayout {
-            id: preamp
-            SpinBox {
-                editable: true
-                from: -150
-                to: 150
-                value: AudioSettings.replayGainPreamp
-                onValueModified: {
-                    preamp.setPreamp(value)
-                }
-            }
-            Button {
-                id: resetPreampButton
-
-                flat: true
-                icon.name: "edit-reset"
-                onClicked: {
-                    preamp.setPreamp(0)
-                }
-                ToolTip {
-                    text: KI18n.i18nc("@info:tooltip", "Reset to default value")
-                    delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                    visible: resetPreampButton.hovered
-                             && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-                }
-            }
-
-            function setPreamp(val) {
-                AudioSettings.replayGainPreamp = val
-                AudioSettings.save()
-            }
-        }
-
-        // Replay Gain Fallback
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Fallback (dB)")
-            Layout.alignment: Qt.AlignRight
-        }
-        RowLayout {
-            id: fallback
-            SpinBox {
-                editable: true
-                from: -200
-                to: 60
-                value: AudioSettings.replayGainFallback
-                onValueModified: {
-                    fallback.setFallback(value)
-                }
-            }
-            Button {
-                id: resetFallbackButton
-
-                flat: true
-                icon.name: "edit-reset"
-                onClicked: {
-                    fallback.setFallback(0)
-                }
-                ToolTip {
-                    text: KI18n.i18nc("@info:tooltip", "Reset to default value")
-                    delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                    visible: resetFallbackButton.hovered
-                             && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-                }
-            }
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip", "Gain in dB to apply if the file has no replay gain tags.<br><br>" +
-                                   "This setting is in effect only when:<br>" +
-                                   "- the replaygain setting is disabled<br>" +
-                                   "- the replaygain setting is enabled and the file has no replaygain metadata<br>" +
-                                   "If this is in effect, other replaygain settings are ignored.")
-                toolTipWidth: 450
-
-                Layout.preferredHeight: Kirigami.Units.iconSizes.medium
-            }
-
-            function setFallback(val) {
-                AudioSettings.replayGainFallback = val
-                AudioSettings.save()
-            }
-        }
-
-        Item {
-            Layout.preferredWidth: Kirigami.Units.gridUnit
-            Layout.preferredHeight: Kirigami.Units.gridUnit
-        }
+        Item { Layout.preferredHeight: Kirigami.Units.gridUnit }
     }
 }

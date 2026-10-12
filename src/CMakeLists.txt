@@ -65,7 +65,14 @@ qt_add_resources(haruna sql_files
 
 qt_add_resources(haruna animations
     FILES
-        ../data/animations/192-haruna-animation-sliding.png
+        ../data/animations/192-natsuna-animation-sliding.png
+)
+
+# Natsuna: bundle the logo so the window icon and About page work
+# even when running from the build folder (icon not installed)
+qt_add_resources(haruna natsuna_logo
+    FILES
+        ../data/icons/256-apps-natsuna.png
 )
 
 qt6_add_shaders(haruna
@@ -99,6 +106,8 @@ add_subdirectory(settings)
 add_subdirectory(youtube)
 
 set_source_files_properties(qml/Models.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(qml/Natsuna/Preferences/PrefStyle.qml
     PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 qt_add_qml_module(haruna
@@ -158,6 +167,13 @@ qt_add_qml_module(haruna
         qml/Natsuna/Menus/NatsunaViewMenu.qml
         qml/Natsuna/Menus/NatsunaHelpMenu.qml
         qml/Natsuna/Menus/NatsunaToggleItem.qml
+
+        qml/Natsuna/Preferences/PrefHeading.qml
+        qml/Natsuna/Preferences/PrefPageHeader.qml
+        qml/Natsuna/Preferences/PrefResetButton.qml
+        qml/Natsuna/Preferences/PrefRow.qml
+        qml/Natsuna/Preferences/PrefSection.qml
+        qml/Natsuna/Preferences/PrefStyle.qml
 
         qml/Settings/DatabaseSettings.qml
         qml/Settings/GeneralSettings.qml

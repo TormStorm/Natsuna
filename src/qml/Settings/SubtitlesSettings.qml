@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2020 George Florea Bănuș <georgefb899@gmail.com>
+ * SPDX-FileCopyrightText: 2026 Natsuna contributors
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -18,489 +19,338 @@ import org.kde.haruna.settings
 SettingsBasePage {
     id: root
 
-    GridLayout {
-        id: content
+    readonly property string trackPriorityHelp: KI18n.i18nc("@info:tooltip",
+                                                            "Track selection priority:<br>" +
+                                                            "- preferred track id<br>" +
+                                                            "- track matching the preferred language<br>" +
+                                                            "- default track<br>" +
+                                                            "- no track")
 
-        columns: 2
+    // A color swatch, hex field and reset button bound to one subtitle color setting
+    component ColorRow: PrefRow {
+        id: colorRow
 
-        SubtitlesFolders {
-            id: subtitleFolders
-            implicitWidth: root.width
-            Layout.fillWidth: true
-            Layout.columnSpan: 2
+        property string color
+        property string defaultColor
+        signal colorEdited(string color)
+
+        ColorPickerButton {
+            id: picker
+
+            color: colorRow.color
+            onColorChosen: function(color) {
+                colorField.text = color
+            }
+            Layout.preferredHeight: colorField.height
+            Layout.preferredWidth: colorField.height
         }
 
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
+        TextField {
+            id: colorField
 
-        CheckBox {
-            id: autoSelectSubtitles
+            text: colorRow.color
+            font.family: "monospace"
+            Layout.preferredWidth: Kirigami.Units.gridUnit * 7
+            onTextChanged: save()
 
-            text: KI18n.i18nc("@label:check", "Auto select track")
-            checked: SubtitlesSettings.autoSelectSubtitles
-            
-            onClicked: {
-                SubtitlesSettings.autoSelectSubtitles = checked
-                SubtitlesSettings.save()
+            Connections {
+                target: root
+                function onSave() {
+                    colorField.save()
+                }
             }
 
-            ToolTip {
-                text: KI18n.i18nc("@info:tooltip", "When checked a subtitle track will be automatically selected and displayed")
-                delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                visible: autoSelectSubtitles.hovered
-                         && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
+            function save() : void {
+                picker.color = text
+                colorRow.colorEdited(text)
             }
         }
 
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Preferred language")
-            Layout.alignment: Qt.AlignRight
+        PrefResetButton {
+            onClicked: colorField.text = colorRow.defaultColor
+        }
+    }
+
+    ColumnLayout {
+        spacing: PrefStyle.sectionSpacing
+
+        PrefHeading {
+            text: KI18n.i18nc("@title", "Subtitles")
         }
 
-        RowLayout {
-            TextField {
-                id: preferredLanguage
+        // ------------------------------------
+        // Track selection
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Track selection")
 
-                text: SubtitlesSettings.preferredLanguage
-                placeholderText: "eng, ger etc."
-                Layout.fillWidth: true
-                onEditingFinished: save()
+            PrefRow {
+                title: KI18n.i18nc("@label:check", "Turn on subtitles automatically")
+                description: KI18n.i18nc("@info", "Pick and show a subtitle track when a file starts.")
+
+                Switch {
+                    id: autoSelectSubtitles
+
+                    checked: SubtitlesSettings.autoSelectSubtitles
+                    onToggled: {
+                        SubtitlesSettings.autoSelectSubtitles = checked
+                        SubtitlesSettings.save()
+                    }
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@label:textbox", "Preferred language")
+                description: KI18n.i18nc("@info", "Language codes, for example: eng, ger")
+                help: root.trackPriorityHelp
+                indented: true
                 enabled: autoSelectSubtitles.checked
 
-                Connections {
-                    target: root
-                    function onSave() {
-                        preferredLanguage.save()
+                TextField {
+                    id: preferredLanguage
+
+                    text: SubtitlesSettings.preferredLanguage
+                    placeholderText: "eng, ger"
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    onEditingFinished: save()
+
+                    Connections {
+                        target: root
+                        function onSave() {
+                            preferredLanguage.save()
+                        }
+                    }
+
+                    function save() : void {
+                        SubtitlesSettings.preferredLanguage = text
+                        SubtitlesSettings.save()
+                    }
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Preferred track")
+                help: root.trackPriorityHelp
+                indented: true
+                enabled: autoSelectSubtitles.checked
+
+                SpinBox {
+                    from: 0
+                    to: 100
+                    editable: true
+                    value: SubtitlesSettings.preferredTrack
+                    onValueModified: {
+                        SubtitlesSettings.preferredTrack = value
+                        SubtitlesSettings.save()
+                    }
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@option:check", "Allow subtitles in black borders")
+                description: KI18n.i18nc("@info", "Subtitles may be drawn outside the picture. Might not work for all .ass subtitles.")
+
+                Switch {
+                    checked: SubtitlesSettings.allowOnBlackBorders
+                    onToggled: {
+                        SubtitlesSettings.allowOnBlackBorders = checked
+                        SubtitlesSettings.save()
+                    }
+                }
+            }
+        }
+
+        // ------------------------------------
+        // Appearance
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Appearance")
+
+            PrefRow {
+                title: KI18n.i18nc("@label:listbox", "Font")
+
+                ComboBox {
+                    id: subtitleFont
+
+                    property string defaultFamily: "Sans Serif"
+
+                    model: SystemUtils.getFonts()
+                    Layout.preferredWidth: PrefStyle.fieldWidth * 1.4
+                    onActivated: function(index) {
+                        setFontFamily()
+                    }
+
+                    Component.onCompleted: currentIndex = indexOfValue(SubtitlesSettings.fontFamily)
+
+                    function setFontFamily() {
+                        SubtitlesSettings.fontFamily = currentText
+                        SubtitlesSettings.save()
                     }
                 }
 
-                function save() : void {
-                    SubtitlesSettings.preferredLanguage = text
-                    SubtitlesSettings.save()
-                }
-            }
-            ToolTipButton {
-                toolTipWidth: 400
-                toolTipText: KI18n.i18nc("@info:tooltip",
-                                         "Track selection priority:<br>" +
-                                         "- preferred track id<br>" +
-                                         "- track matching the preferred language<br>" +
-                                         "- default track<br>" +
-                                         "- no track")
-            }
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Preferred track")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        RowLayout {
-            SpinBox {
-                from: 0
-                to: 100
-                value: SubtitlesSettings.preferredTrack
-                editable: true
-                enabled: autoSelectSubtitles.checked
-                onValueModified: {
-                    SubtitlesSettings.preferredTrack = value
-                    SubtitlesSettings.save()
-                }
-            }
-            ToolTipButton {
-                toolTipWidth: 400
-                toolTipText: KI18n.i18nc("@info:tooltip",
-                                         "Track selection priority:<br>" +
-                                         "- preferred track id<br>" +
-                                         "- track matching the preferred language<br>" +
-                                         "- default track<br>" +
-                                         "- no track")
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            id: allowOnBlackBordersCheckBox
-
-            checked: SubtitlesSettings.allowOnBlackBorders
-            text: KI18n.i18nc("@option:check", "Allow subtitles in black borders")
-            onClicked: {
-                SubtitlesSettings.allowOnBlackBorders = checked
-                SubtitlesSettings.save()
-            }
-
-            ToolTip {
-                text: KI18n.i18nc("@info:tooltip", "When checked the subtitles can be rendered outside the video, in the black borders. Might not work for all .ass subtitles.")
-                delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                visible: allowOnBlackBordersCheckBox.hovered
-                         && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-            }
-        }
-
-        SettingsHeader {
-            text: KI18n.i18nc("@title", "Styling")
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:listbox", "Font family")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-
-            ComboBox {
-                id: subtitleFont
-
-                property string defaultFamily: "Sans Serif"
-
-                model: SystemUtils.getFonts()
-                onActivated: function(index) {
-                    setFontFamily()
-                }
-
-                Component.onCompleted: currentIndex = indexOfValue(SubtitlesSettings.fontFamily)
-                Layout.fillWidth: true
-
-                function setFontFamily() {
-                    SubtitlesSettings.fontFamily = currentText
-                    SubtitlesSettings.save()
+                PrefResetButton {
+                    onClicked: {
+                        subtitleFont.currentIndex = subtitleFont.find(subtitleFont.defaultFamily)
+                        subtitleFont.setFontFamily()
+                    }
                 }
             }
 
-            Button {
-                id: resetSubtitleFontButton
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Size")
 
-                icon.name: "edit-reset"
-                onClicked: {
-                    const index = subtitleFont.find(subtitleFont.defaultFamily)
-                    subtitleFont.currentIndex = index
-                    subtitleFont.setFontFamily()
-                }
-
-                ToolTip {
-                    text: KI18n.i18nc("@info:tooltip", "Reset to default value")
-                    delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                    visible: resetSubtitleFontButton.hovered
-                             && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
+                SpinBox {
+                    from: 0
+                    to: 1000
+                    editable: true
+                    value: SubtitlesSettings.fontSize
+                    onValueModified: {
+                        SubtitlesSettings.fontSize = value
+                        SubtitlesSettings.save()
+                    }
                 }
             }
-        }
 
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Font size")
-            Layout.alignment: Qt.AlignRight
-        }
+            PrefRow {
+                title: KI18n.i18nc("@option:check", "Bold")
 
-        SpinBox {
-            from: 0
-            to: 1000
-            value: SubtitlesSettings.fontSize
-            onValueModified: {
-                SubtitlesSettings.fontSize = value
-                SubtitlesSettings.save()
+                Switch {
+                    checked: SubtitlesSettings.isBold
+                    onToggled: {
+                        SubtitlesSettings.isBold = checked
+                        SubtitlesSettings.save()
+                    }
+                }
             }
-        }
 
-        Label {
-            text: KI18n.i18nc("@label", "Font style")
-            Layout.alignment: Qt.AlignRight
-        }
+            PrefRow {
+                title: KI18n.i18nc("@option:check", "Italic")
 
-        CheckBox {
-            text: KI18n.i18nc("@option:check", "Bold")
-            checked: SubtitlesSettings.isBold
-            onClicked: {
-                SubtitlesSettings.isBold = checked
-                SubtitlesSettings.save()
+                Switch {
+                    checked: SubtitlesSettings.isItalic
+                    onToggled: {
+                        SubtitlesSettings.isItalic = checked
+                        SubtitlesSettings.save()
+                    }
+                }
             }
-        }
 
-        Item { Layout.preferredWidth: 1 }
-
-        CheckBox {
-            text: KI18n.i18nc("@option:check", "Italic")
-            checked: SubtitlesSettings.isItalic
-            onClicked: {
-                SubtitlesSettings.isItalic = checked
-                SubtitlesSettings.save()
-            }
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Font color")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-
-
-            ColorPickerButton {
-                id: subtitleColorPicker
-
+            ColorRow {
+                title: KI18n.i18nc("@label:textbox", "Text color")
                 color: SubtitlesSettings.fontColor
-                onColorChosen: function (color) {
-                    subtitleColor.text = color
-                }
-
-                Layout.preferredHeight: subtitleColor.height
-                Layout.preferredWidth: subtitleColor.height
-            }
-
-            TextField {
-                id: subtitleColor
-
-                property string defaultColor: "#FFFFFFFF"
-
-                text: SubtitlesSettings.fontColor
-
-                onTextChanged: {
-                    save()
-                }
-
-                Connections {
-                    target: root
-                    function onSave() {
-                        subtitleColor.save()
-                    }
-                }
-
-                function save() : void {
-                    subtitleColorPicker.color = text
-                    SubtitlesSettings.fontColor = text
+                defaultColor: "#FFFFFFFF"
+                onColorEdited: function(color) {
+                    SubtitlesSettings.fontColor = color
                     SubtitlesSettings.save()
                 }
             }
-
-            Button {
-                id: resetSubtitleColorButton
-
-                icon.name: "edit-reset"
-                onClicked: subtitleColor.text = subtitleColor.defaultColor
-
-                ToolTip {
-                    text: KI18n.i18nc("@info:tooltip", "Reset to default value")
-                    delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                    visible: resetSubtitleColorButton.hovered
-                             && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-                }
-            }
         }
 
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Shadow color")
-            Layout.alignment: Qt.AlignRight
-        }
+        // ------------------------------------
+        // Outline and shadow
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Outline and shadow")
 
-        RowLayout {
-            Layout.fillWidth: true
+            PrefRow {
+                title: KI18n.i18nc("@label:listbox", "Style")
 
-            ColorPickerButton {
-                id: shadowColorPicker
+                ComboBox {
+                    textRole: "text"
+                    valueRole: "value"
+                    model: ListModel {
+                        id: borderStyleModel
+                    }
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    Component.onCompleted: {
+                        borderStyleModel.append({
+                            text: KI18n.i18nc("@item:listbox border style", "Outline and Shadow"),
+                            value: "outline-and-shadow"
+                        })
+                        borderStyleModel.append({
+                            text: KI18n.i18nc("@item:listbox border style", "Opaque Box"),
+                            value: "opaque-box"
+                        })
+                        borderStyleModel.append({
+                            text: KI18n.i18nc("@item:listbox border style", "Background Box"),
+                            value: "background-box"
+                        })
+                        currentIndex = indexOfValue(SubtitlesSettings.borderStyle)
+                    }
 
-                color: SubtitlesSettings.shadowColor
-                onColorChosen: function (color) {
-                    shadowColor.text = color
-                }
-
-                Layout.preferredHeight: shadowColor.height
-                Layout.preferredWidth: shadowColor.height
-            }
-
-            TextField {
-                id: shadowColor
-
-                property string defaultColor: "#80F0F0F0"
-
-                text: SubtitlesSettings.shadowColor
-
-                onTextChanged: {
-                    save()
-                }
-
-                Connections {
-                    target: root
-                    function onSave() {
-                        shadowColor.save()
+                    onActivated: function(index) {
+                        SubtitlesSettings.borderStyle = model.get(index).value
+                        SubtitlesSettings.save()
                     }
                 }
+            }
 
-                function save() : void {
-                    shadowColorPicker.color = text
-                    SubtitlesSettings.shadowColor = text
-                    SubtitlesSettings.save()
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Outline width")
+                description: KI18n.i18nc("@info", "Set to 0 to turn the outline off.")
+
+                SpinBox {
+                    from: 0
+                    to: 25
+                    editable: true
+                    value: SubtitlesSettings.borderSize
+                    onValueModified: {
+                        SubtitlesSettings.borderSize = value
+                        SubtitlesSettings.save()
+                    }
                 }
             }
 
-            Button {
-                id: resetShadowColorButton
-
-                icon.name: "edit-reset"
-                onClicked: shadowColor.text = shadowColor.defaultColor
-
-                ToolTip {
-                    text: KI18n.i18nc("@info:tooltip", "Reset to default value")
-                    delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                    visible: resetShadowColorButton.hovered
-                             && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-                }
-            }
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Shadow offset")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        SpinBox {
-            id: shadowOffsetSpinBox
-
-            from: 0
-            to: 25
-            value: SubtitlesSettings.shadowOffset
-            editable: true
-            onValueModified: {
-                SubtitlesSettings.shadowOffset = value
-                SubtitlesSettings.save()
-            }
-
-            ToolTip {
-                text: KI18n.i18nc("@info:tooltip", "Set to 0 (zero) to disable.")
-                delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                visible: shadowOffsetSpinBox.hovered
-                         && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-            }
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:textbox", "Border color")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-
-            ColorPickerButton {
-                id: borderColorPicker
-
+            ColorRow {
+                title: KI18n.i18nc("@label:textbox", "Outline color")
                 color: SubtitlesSettings.borderColor
-                onColorChosen: function (color) {
-                    borderColor.text = color
-                }
-
-                Layout.preferredHeight: borderColor.height
-                Layout.preferredWidth: borderColor.height
-            }
-
-            TextField {
-                id: borderColor
-
-                property string defaultColor: "#FF000000"
-
-                text: SubtitlesSettings.borderColor
-
-                onTextChanged: {
-                    save()
-                }
-
-                Connections {
-                    target: root
-                    function onSave() {
-                        borderColor.save()
-                    }
-                }
-
-                function save() : void {
-                    borderColorPicker.color = text
-                    SubtitlesSettings.borderColor = text
+                defaultColor: "#FF000000"
+                onColorEdited: function(color) {
+                    SubtitlesSettings.borderColor = color
                     SubtitlesSettings.save()
                 }
             }
 
-            Button {
-                id: resetBorderColorButton
+            PrefRow {
+                title: KI18n.i18nc("@label:spinbox", "Shadow offset")
+                description: KI18n.i18nc("@info", "Set to 0 to turn the shadow off.")
 
-                icon.name: "edit-reset"
-                onClicked: borderColor.text = borderColor.defaultColor
+                SpinBox {
+                    from: 0
+                    to: 25
+                    editable: true
+                    value: SubtitlesSettings.shadowOffset
+                    onValueModified: {
+                        SubtitlesSettings.shadowOffset = value
+                        SubtitlesSettings.save()
+                    }
+                }
+            }
 
-                ToolTip {
-                    text: KI18n.i18nc("@info:tooltip", "Reset to default value")
-                    delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                    visible: resetBorderColorButton.hovered
-                             && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
+            ColorRow {
+                title: KI18n.i18nc("@label:textbox", "Shadow color")
+                color: SubtitlesSettings.shadowColor
+                defaultColor: "#80F0F0F0"
+                onColorEdited: function(color) {
+                    SubtitlesSettings.shadowColor = color
+                    SubtitlesSettings.save()
                 }
             }
         }
 
-        Label {
-            text: KI18n.i18nc("@label:spinbox", "Border width")
-            Layout.alignment: Qt.AlignRight
-        }
+        // ------------------------------------
+        // Subtitle files
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Subtitle files")
 
-        SpinBox {
-            id: borderSizeSpinBox
+            SubtitlesFolders {
+                id: subtitleFolders
 
-            from: 0
-            to: 25
-            value: SubtitlesSettings.borderSize
-            editable: true
-            onValueModified: {
-                SubtitlesSettings.borderSize = value
-                SubtitlesSettings.save()
-            }
-
-            ToolTip {
-                text: KI18n.i18nc("@info:tooltip", "Set to 0 (zero) to disable.")
-                delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                visible: borderSizeSpinBox.hovered
-                         && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
+                Layout.fillWidth: true
             }
         }
 
-        Label {
-            text: KI18n.i18nc("@label:listbox", "Border style")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        ComboBox {
-            textRole: "text"
-            valueRole: "value"
-            model: ListModel {
-                id: borderStyleModel
-            }
-            Component.onCompleted: {
-                const outlineAndShadow = {
-                    text: KI18n.i18nc("@item:listbox border style", "Outline and Shadow"),
-                    value: "outline-and-shadow"
-                }
-                borderStyleModel.append(outlineAndShadow)
-
-                const opaqueBox = {
-                    text: KI18n.i18nc("@item:listbox border style", "Opaque Box"),
-                    value: "opaque-box"
-                }
-                borderStyleModel.append(opaqueBox)
-
-                const bgBox = {
-                    text: KI18n.i18nc("@item:listbox border style", "Background Box"),
-                    value: "background-box"
-                }
-                borderStyleModel.append(bgBox)
-
-                currentIndex = indexOfValue(SubtitlesSettings.borderStyle)
-            }
-
-            onActivated: function(index) {
-                SubtitlesSettings.borderStyle = model.get(index).value
-                SubtitlesSettings.save()
-            }
-        }
-
-        Item {
-            Layout.preferredWidth: Kirigami.Units.gridUnit
-            Layout.preferredHeight: Kirigami.Units.gridUnit
-        }
+        Item { Layout.preferredHeight: Kirigami.Units.gridUnit }
     }
 }

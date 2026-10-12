@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     QIcon::setFallbackThemeName(u"breeze"_s);
 
     QApplication qApplication(argc, argv);
-    QApplication::setWindowIcon(QIcon::fromTheme(u"natsuna"_s));
+    QApplication::setWindowIcon(QIcon::fromTheme(u"natsuna"_s, QIcon(u":/data/icons/256-apps-natsuna.png"_s)));
 
     bool handledByQPT = INITIAL_STYLE != QQuickStyle::name();
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE") && !handledByQPT) {

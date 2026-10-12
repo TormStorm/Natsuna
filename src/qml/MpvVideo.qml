@@ -383,7 +383,7 @@ MpvItem {
                         frameHeight: 192
                         frameWidth: 192
                         interpolate: false
-                        source: "qrc:/data/animations/192-haruna-animation-sliding.png"
+                        source: "qrc:/data/animations/192-natsuna-animation-sliding.png"
                         reverse: false
                         running: loadingIndicator.play
                         onRunningChanged: currentFrame = 0

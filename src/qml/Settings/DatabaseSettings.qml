@@ -1,5 +1,6 @@
 /*
- * SPDX-FileCopyrightText: 2026 George Florea Bănuș <georgefb899@gmail.com>
+ * SPDX-FileCopyrightText: 2023 George Florea Bănuș <georgefb899@gmail.com>
+ * SPDX-FileCopyrightText: 2026 Natsuna contributors
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -9,62 +10,54 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import org.kde.ki18n
+import org.kde.kirigami as Kirigami
 
 import org.kde.haruna
 
 SettingsBasePage {
     id: root
 
-    GridLayout {
-        id: content
+    ColumnLayout {
+        spacing: PrefStyle.sectionSpacing
 
-        columns: 2
-
-        Label {
-            text: KI18n.i18nc("@label", "Clear recent files")
-            Layout.alignment: Qt.AlignRight
-        }
-        RowLayout {
-            Layout.fillWidth: true
-
-            Button {
-                text: KI18n.i18nc("@action:button:", "Clear")
-                onClicked: Models.recentFilesModel.deleteEntries()
-            }
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip", "Deletes all recent files saved in the database")
-            }
+        PrefHeading {
+            text: KI18n.i18nc("@title", "Database")
         }
 
-        Label {
-            text: KI18n.i18nc("@label", "Clear metadata")
-            Layout.alignment: Qt.AlignRight
-        }
-        RowLayout {
-            Layout.fillWidth: true
+        PrefSection {
+            title: KI18n.i18nc("@title", "Stored data")
 
-            Button {
-                text: KI18n.i18nc("@action:button:", "Clear")
-                onClicked: Database.deleteAllMetadata()
-            }
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip", "Deletes all metadata saved in the database")
-            }
-        }
+            PrefRow {
+                title: KI18n.i18nc("@label", "Recent files")
+                description: KI18n.i18nc("@info", "Delete the list of recently opened files.")
 
-        Label {
-            text: KI18n.i18nc("@label", "Clear playback positions")
-            Layout.alignment: Qt.AlignRight
-        }
-        RowLayout {
-            Layout.fillWidth: true
-
-            Button {
-                text: KI18n.i18nc("@action:button:", "Clear")
-                onClicked: Database.deletePlaybackPositions()
+                Button {
+                    text: KI18n.i18nc("@action:button", "Clear")
+                    icon.name: "edit-clear-history"
+                    onClicked: Models.recentFilesModel.deleteEntries()
+                }
             }
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip", "Deletes all playback positions saved in the database")
+
+            PrefRow {
+                title: KI18n.i18nc("@label", "Metadata")
+                description: KI18n.i18nc("@info", "Delete cached titles, durations and other file information.")
+
+                Button {
+                    text: KI18n.i18nc("@action:button", "Clear")
+                    icon.name: "edit-clear-history"
+                    onClicked: Database.deleteAllMetadata()
+                }
+            }
+
+            PrefRow {
+                title: KI18n.i18nc("@label", "Playback positions")
+                description: KI18n.i18nc("@info", "Forget where you stopped watching every file.")
+
+                Button {
+                    text: KI18n.i18nc("@action:button", "Clear")
+                    icon.name: "edit-clear-history"
+                    onClicked: Database.deletePlaybackPositions()
+                }
             }
         }
     }

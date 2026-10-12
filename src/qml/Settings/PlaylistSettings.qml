@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2020 George Florea Bănuș <georgefb899@gmail.com>
+ * SPDX-FileCopyrightText: 2026 Natsuna contributors
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -17,270 +18,255 @@ import org.kde.haruna.settings
 SettingsBasePage {
     id: root
 
-    GridLayout {
-        id: content
+    // A switch row bound to one boolean playlist setting
+    component PlaylistSwitchRow: PrefRow {
+        id: switchRow
 
-        columns: 2
+        property bool value
+        signal valueEdited(bool value)
 
-        Label {
-            text: KI18n.i18nc("@label:listbox", "Position")
-            Layout.alignment: Qt.AlignRight
+        Switch {
+            checked: switchRow.value
+            onToggled: switchRow.valueEdited(checked)
+        }
+    }
+
+    ColumnLayout {
+        spacing: PrefStyle.sectionSpacing
+
+        PrefHeading {
+            text: KI18n.i18nc("@title", "Playlist")
         }
 
-        ComboBox {
-            textRole: "text"
-            valueRole: "value"
-            model: ListModel {
-                id: positionModel
-            }
-            Component.onCompleted: {
-                const left = {
-                    text: KI18n.i18nc("@item:listbox playlist position", "Left"),
-                    value: "left"
-                }
-                positionModel.append(left)
+        // ------------------------------------
+        // Playback
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Playback")
 
-                const right = {
-                    text: KI18n.i18nc("@item:listbox playlist position", "Right"),
-                    value: "right"
-                }
-                positionModel.append(right)
+            PrefRow {
+                title: KI18n.i18nc("@label:listbox", "When a file ends")
+                helpWidth: 450
+                help: KI18n.i18nc("@info:tooltip playback description",
+                                  "<strong>Repeat playlist</strong>: playlist is repeated indefinitely<br>" +
+                                  "<strong>Stop after last item</strong>: playback stops after the last item in the playlist<br>" +
+                                  "<strong>Repeat item</strong>: current playing item is repeated indefinitely<br>" +
+                                  "<strong>Stop after item</strong>: playback stops after the current playing item")
 
-                currentIndex = indexOfValue(PlaylistSettings.position)
-            }
+                ComboBox {
+                    id: playbackBehaviorComboBox
 
-            onActivated: function(index) {
-                PlaylistSettings.position = model.get(index).value
-                PlaylistSettings.save()
-            }
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:listbox", "Playlist style")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        ComboBox {
-            textRole: "text"
-            valueRole: "value"
-            model: ListModel {
-                id: styleModel
-            }
-            Component.onCompleted: {
-                const defaultStyle = {
-                    text: KI18n.i18nc("@item:listbox the style of the playlist", "Default"),
-                    value: "default"
-                }
-                styleModel.append(defaultStyle)
-
-                const thumbnail = {
-                    text: KI18n.i18nc("@item:listbox the style of the playlist", "With thumbnails"),
-                    value: "withThumbnails"
-                }
-                styleModel.append(thumbnail)
-
-                const compact = {
-                    text: KI18n.i18nc("@item:listbox the style of the playlist", "Compact"),
-                    value: "compact"
-                }
-                styleModel.append(compact)
-
-                currentIndex = indexOfValue(PlaylistSettings.style)
-            }
-            onActivated: function(index) {
-                PlaylistSettings.style = model.get(index).value
-                PlaylistSettings.save()
-            }
-        }
-
-        Label {
-            text: KI18n.i18nc("@label:listbox", "Playback behavior")
-            Layout.alignment: Qt.AlignRight
-        }
-
-        RowLayout {
-            ComboBox {
-                id: playbackBehaviorComboBox
-                textRole: "text"
-                valueRole: "value"
-                model: ListModel {
-                    id: playbackBehaviorModel
-                }
-                Component.onCompleted: {
-                    const repeat = {
-                        text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Repeat playlist"),
-                        value: "RepeatPlaylist"
+                    textRole: "text"
+                    valueRole: "value"
+                    model: ListModel {
+                        id: playbackBehaviorModel
                     }
-                    playbackBehaviorModel.append(repeat)
-
-                    const stopAfterLast = {
-                        text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Stop after last item"),
-                        value: "StopAfterLast"
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    Component.onCompleted: {
+                        playbackBehaviorModel.append({
+                            text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Repeat playlist"),
+                            value: "RepeatPlaylist"
+                        })
+                        playbackBehaviorModel.append({
+                            text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Stop after last item"),
+                            value: "StopAfterLast"
+                        })
+                        playbackBehaviorModel.append({
+                            text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Repeat item"),
+                            value: "RepeatItem"
+                        })
+                        playbackBehaviorModel.append({
+                            text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Stop after item"),
+                            value: "StopAfterItem"
+                        })
+                        currentIndex = indexOfValue(PlaylistSettings.playbackBehavior)
                     }
-                    playbackBehaviorModel.append(stopAfterLast)
-
-                    const repeatItem = {
-                        text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Repeat item"),
-                        value: "RepeatItem"
+                    onActivated: function(index) {
+                        PlaylistSettings.playbackBehavior = model.get(index).value
+                        PlaylistSettings.save()
                     }
-                    playbackBehaviorModel.append(repeatItem)
-
-                    const stopAfterItem = {
-                        text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Stop after item"),
-                        value: "StopAfterItem"
+                    // When changed from mpris or toolbar, sync the GUI:
+                    Connections {
+                        target: PlaylistSettings
+                        function onPlaybackBehaviorChanged() {
+                            const comboBox = playbackBehaviorComboBox
+                            comboBox.currentIndex = comboBox.indexOfValue(PlaylistSettings.playbackBehavior)
+                        }
                     }
-                    playbackBehaviorModel.append(stopAfterItem)
-
-                    currentIndex = indexOfValue(PlaylistSettings.playbackBehavior)
                 }
-                onActivated: function(index) {
-                    PlaylistSettings.playbackBehavior = model.get(index).value
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Shuffle")
+                enabled: ["StopAfterLast", "RepeatPlaylist"].includes(PlaylistSettings.playbackBehavior)
+                value: PlaylistSettings.randomPlayback
+                onValueEdited: function(value) {
+                    PlaylistSettings.randomPlayback = value
                     PlaylistSettings.save()
                 }
-                // When changed from mpris or toolbar, sync the GUI:
-                Connections {
-                    target: PlaylistSettings
-                    function onPlaybackBehaviorChanged() {
-                        const comboBox = playbackBehaviorComboBox
-                        comboBox.currentIndex = comboBox.indexOfValue(PlaylistSettings.playbackBehavior)
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Add other files from the same folder")
+                description: KI18n.i18nc("@info", "Opening a file also queues the other videos next to it.")
+                value: PlaylistSettings.loadSiblings
+                onValueEdited: function(value) {
+                    PlaylistSettings.loadSiblings = value
+                    PlaylistSettings.save()
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Open items with a single click")
+                value: PlaylistSettings.openWithSingleClick
+                onValueEdited: function(value) {
+                    PlaylistSettings.openWithSingleClick = value
+                    PlaylistSettings.save()
+                }
+            }
+        }
+
+        // ------------------------------------
+        // Appearance
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Appearance")
+
+            PrefRow {
+                title: KI18n.i18nc("@label:listbox", "Position")
+
+                ComboBox {
+                    textRole: "text"
+                    valueRole: "value"
+                    model: ListModel {
+                        id: positionModel
+                    }
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    Component.onCompleted: {
+                        positionModel.append({
+                            text: KI18n.i18nc("@item:listbox playlist position", "Left"),
+                            value: "left"
+                        })
+                        positionModel.append({
+                            text: KI18n.i18nc("@item:listbox playlist position", "Right"),
+                            value: "right"
+                        })
+                        currentIndex = indexOfValue(PlaylistSettings.position)
+                    }
+
+                    onActivated: function(index) {
+                        PlaylistSettings.position = model.get(index).value
+                        PlaylistSettings.save()
                     }
                 }
             }
 
-            ToolTipButton {
-                toolTipText: KI18n.i18nc("@info:tooltip playback description",
-                                   "<strong>Repeat playlist</strong>: playlist is repeated indefinitely<br>" +
-                                   "<strong>Stop after last item</strong>: playback stops after the last item in the playlist<br>" +
-                                   "<strong>Repeat item</strong>: current playing item is repeated indefinitely<br>" +
-                                   "<strong>Stop after item</strong>: playback stops after the current playing item")
-                toolTipWidth: Math.min(450, root.width)
+            PrefRow {
+                title: KI18n.i18nc("@label:listbox", "Style")
+
+                ComboBox {
+                    textRole: "text"
+                    valueRole: "value"
+                    model: ListModel {
+                        id: styleModel
+                    }
+                    Layout.preferredWidth: PrefStyle.fieldWidth
+                    Component.onCompleted: {
+                        styleModel.append({
+                            text: KI18n.i18nc("@item:listbox the style of the playlist", "Default"),
+                            value: "default"
+                        })
+                        styleModel.append({
+                            text: KI18n.i18nc("@item:listbox the style of the playlist", "With thumbnails"),
+                            value: "withThumbnails"
+                        })
+                        styleModel.append({
+                            text: KI18n.i18nc("@item:listbox the style of the playlist", "Compact"),
+                            value: "compact"
+                        })
+                        currentIndex = indexOfValue(PlaylistSettings.style)
+                    }
+                    onActivated: function(index) {
+                        PlaylistSettings.style = model.get(index).value
+                        PlaylistSettings.save()
+                    }
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Draw over the video")
+                description: KI18n.i18nc("@info", "When off, the video shrinks to make room for the playlist.")
+                value: PlaylistSettings.overlayVideo
+                onValueEdited: function(value) {
+                    PlaylistSettings.overlayVideo = value
+                    PlaylistSettings.save()
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Show toolbar")
+                value: PlaylistSettings.showToolbar
+                onValueEdited: function(value) {
+                    PlaylistSettings.showToolbar = value
+                    PlaylistSettings.save()
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Show media title instead of file name")
+                value: PlaylistSettings.showMediaTitle
+                onValueEdited: function(value) {
+                    PlaylistSettings.showMediaTitle = value
+                    PlaylistSettings.save()
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Show row numbers")
+                value: PlaylistSettings.showRowNumber
+                onValueEdited: function(value) {
+                    PlaylistSettings.showRowNumber = value
+                    PlaylistSettings.save()
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Larger text in fullscreen")
+                enabled: PlaylistSettings.style !== "compact"
+                value: PlaylistSettings.bigFontFullscreen
+                onValueEdited: function(value) {
+                    PlaylistSettings.bigFontFullscreen = value
+                    PlaylistSettings.save()
+                }
             }
         }
 
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.randomPlayback
-            enabled: ["StopAfterLast", "RepeatPlaylist"].includes(PlaylistSettings.playbackBehavior)
-            text: KI18n.i18nc("@item:listbox the playback behavior of the playlist", "Random playback")
-            onClicked: {
-                PlaylistSettings.randomPlayback = checked
-                PlaylistSettings.save()
+        // ------------------------------------
+        // Showing the playlist
+        // ------------------------------------
+        PrefSection {
+            title: KI18n.i18nc("@title", "Showing the playlist")
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Open when the mouse reaches the window edge")
+                value: PlaylistSettings.canToggleWithMouse
+                onValueEdited: function(value) {
+                    PlaylistSettings.canToggleWithMouse = value
+                    PlaylistSettings.save()
+                }
+            }
+
+            PlaylistSwitchRow {
+                title: KI18n.i18nc("@option:check", "Remember if it was open")
+                description: KI18n.i18nc("@info", "Reopen the playlist on startup if it was open when you closed the player.")
+                value: PlaylistSettings.rememberState
+                onValueEdited: function(value) {
+                    PlaylistSettings.rememberState = value
+                    PlaylistSettings.save()
+                }
             }
         }
 
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.showToolbar
-            text: KI18n.i18nc("@option:check", "Show toolbar")
-            onClicked: {
-                PlaylistSettings.showToolbar = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            id: overlayVideoCheckBox
-
-            checked: PlaylistSettings.overlayVideo
-            text: KI18n.i18nc("@option:check", "Overlay video")
-            onClicked: {
-                PlaylistSettings.overlayVideo = checked
-                PlaylistSettings.save()
-            }
-
-            ToolTip {
-                text: KI18n.i18nc("@info:tooltip", "When checked the playlist goes on top of the video\nWhen unchecked the video is resized")
-                delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                visible: overlayVideoCheckBox.hovered
-                         && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.showMediaTitle
-            text: KI18n.i18nc("@option:check", "Show media title instead of file name")
-            onClicked: {
-                PlaylistSettings.showMediaTitle = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.loadSiblings
-            text: KI18n.i18nc("@option:check", "Auto load videos from same folder")
-            onClicked: {
-                PlaylistSettings.loadSiblings = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.showRowNumber
-            text: KI18n.i18nc("@option:check", "Show row number")
-            onClicked: {
-                PlaylistSettings.showRowNumber = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.canToggleWithMouse
-            text: KI18n.i18nc("@option:check", "Toggle with mouse")
-            onClicked: {
-                PlaylistSettings.canToggleWithMouse = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            text: KI18n.i18nc("@option:check", "Increase font size when fullscreen")
-            checked: PlaylistSettings.bigFontFullscreen
-            enabled: PlaylistSettings.style === "compact" ? false : true
-            onClicked: {
-                PlaylistSettings.bigFontFullscreen = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            id: rememberStateCheckBox
-
-            checked: PlaylistSettings.rememberState
-            text: KI18n.i18nc("@option:check", "Remember last playlist state")
-            onClicked: {
-                PlaylistSettings.rememberState = checked
-                PlaylistSettings.save()
-            }
-
-            ToolTip {
-                text: KI18n.i18nc("@info:tooltip", "When checked the playlist state (visible/hidden) "
-                            + "is remembered across launches")
-                delay: HarunaApp.isAltKeyPressed ? 0 : Kirigami.Units.toolTipDelay
-                visible: rememberStateCheckBox.hovered
-                         && (GeneralSettings.showExplanatoryToolTips || HarunaApp.isAltKeyPressed)
-            }
-        }
-
-        Item { Layout.preferredWidth: 1; Layout.preferredHeight: 1 }
-        CheckBox {
-            checked: PlaylistSettings.openWithSingleClick
-            text: KI18n.i18nc("@option:check", "Open items with single click")
-            onClicked: {
-                PlaylistSettings.openWithSingleClick = checked
-                PlaylistSettings.save()
-            }
-        }
-
-        Item {
-            Layout.preferredWidth: Kirigami.Units.gridUnit
-            Layout.preferredHeight: Kirigami.Units.gridUnit
-        }
+        Item { Layout.preferredHeight: Kirigami.Units.gridUnit }
     }
 }

@@ -85,5 +85,8 @@
     <entry name="ShowRemainingTime" type="bool">
       <default>false</default>
     </entry>
+    <entry name="ShowAllPreferences" type="bool">
+      <default>false</default>
+    </entry>
   </group>
 </kcfg>

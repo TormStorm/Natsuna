@@ -21,6 +21,11 @@ import org.kde.haruna.utilities
 SettingsBasePage {
     id: root
 
+    header: PrefPageHeader {
+        width: parent.width
+        text: KI18n.i18nc("@title", "Custom Commands")
+    }
+
     required property MpvVideo m_mpv
     required property Kirigami.ApplicationWindow m_settingsWindow
 

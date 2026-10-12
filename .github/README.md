@@ -47,6 +47,14 @@ Haruna's more specialised extras are no longer in the menus:
 
 They all still work through their keyboard shortcuts, and you can find and rebind every one under **Tools → Preferences → Shortcuts**. Secondary subtitles are also still available from the toolbar's subtitle button.
 
+**Preferences.** The settings window has been rebuilt and renamed Preferences:
+- Every page uses the same layout: grouped cards with the setting on the left and its control on the right, so nothing jumps around between pages.
+- Options that depend on another one are indented under it and greyed out when they don't apply.
+- The sidebar shows the everyday pages: General, Audio, Video, Subtitles, Shortcuts and About.
+- Playback, Playlist, Mouse, Custom Commands, Database and Debug are tucked under **Show all settings**, which is remembered.
+
+**Logo.** Natsuna has its own icon: an "N" made of film strip on a warm summer gradient (*natsu* means summer, a nod to Haruna's *haru*, spring). The same film-strip "N" is shown when nothing is playing, with its sprocket holes sliding while a stream loads.
+
 **Always on Top.** View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11. It's remembered between sessions.
 
 ### Keyboard shortcuts
@@ -70,7 +78,7 @@ They all still work through their keyboard shortcuts, and you can find and rebin
 | Ctrl+N | Open network stream |
 | Ctrl+P | Preferences |
 
-All shortcuts and mouse actions can be changed under **Tools → Preferences**.
+All shortcuts and mouse actions can be changed under **Tools → Preferences** (Shortcuts, or Mouse under Show all settings).
 
 ## Building
 
@@ -105,6 +113,7 @@ git push
 
 If a merge conflicts, it will almost always be in one of these files:
 - the control bar (`src/qml/Footer.qml`)
+- the preferences pages (`src/qml/Settings/`), which Natsuna rebuilt
 - shortcut and mouse defaults
 - the renamed app identity
 
