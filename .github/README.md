@@ -22,7 +22,7 @@ Natsuna installs alongside Haruna. It has its own name, app-menu entry, binary (
 - Elapsed time sits left of the seek bar, total time on the right. Click the total time to switch to remaining time; your choice is remembered.
 - Below that are Play/Pause, Previous, Stop, Next and Fullscreen, with volume on the right.
 
-**Fullscreen controller.** In fullscreen the controls shrink to a small floating box near the bottom of the screen. It appears when you move the mouse and fades out shortly after the mouse stops.
+**Fullscreen controller.** In fullscreen the controls shrink to a smaller box centred at the bottom edge of the screen. It appears when you move the mouse and fades out shortly after the mouse stops.
 
 **File title.** When a file starts, its name is shown for a few seconds at the bottom of the video, with no background box.
 

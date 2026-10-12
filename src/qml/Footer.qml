@@ -48,9 +48,8 @@ Item {
     property int hideDelay: 2000
 
     implicitWidth: Window.window.contentItem.width
-    implicitHeight: root.isFloating
-                    ? footer.height + Kirigami.Units.largeSpacing * (root.isSmallSize ? 1 : 3)
-                    : footer.height
+    // The floating controller sits flush against the bottom of the screen
+    implicitHeight: footer.height
 
     onIsFloatingChanged: {
         if (root.isFloating) {
@@ -99,7 +98,10 @@ Item {
         hoverEnabled: true
         background: Rectangle {
             color: Qt.alpha(Kirigami.Theme.backgroundColor, root.isFloating ? 0.85 : 1.0)
+            // rounded top corners only, since the bottom edge touches the screen edge
             radius: root.isFloating ? Kirigami.Units.cornerRadius : 0
+            bottomLeftRadius: 0
+            bottomRightRadius: 0
             border.width: root.isFloating ? 1 : 0
             border.color: Qt.alpha(Kirigami.Theme.textColor, 0.15)
         }
