@@ -13,6 +13,7 @@ import QtQuick.Layouts
 
 import org.kde.ki18n
 import org.kde.kirigami as Kirigami
+import org.kde.kitemmodels as KItemModels
 
 import org.kde.haruna
 import org.kde.haruna.settings
@@ -21,11 +22,34 @@ ResizeablePage {
     id: root
 
     property TranscriptModel transcriptModel: TranscriptModel {}
+    property TranscriptProxyModel transcriptProxyModel: TranscriptProxyModel {
+        transcriptModel: root.transcriptModel
+    }
+    property KItemModels.KSortFilterProxyModel transcriptStylesProxyModel: KItemModels.KSortFilterProxyModel {
+        sourceModel: root.transcriptProxyModel
+        filterRoleName: "style"
+        filterCaseSensitivity: Qt.CaseInsensitive
+        sortRoleName: "style"
+        sortOrder: Qt.AscendingOrder
+    }
     property int selectedTrackId: -1
 
     edge: PlaylistSettings.position === "right" ? Qt.LeftEdge : Qt.RightEdge
     customWidth: 380
     width: limitWidth(customWidth * fsScale)
+
+    function toggle() {
+        if (state === "visible") {
+            cancelParsing()
+            state = "hidden"
+        } else {
+            state = "visible"
+        }
+    }
+
+    function cancelParsing() {
+        root.transcriptModel.cancelParsing()
+    }
 
     function limitWidth(pWidth) {
         return Math.min(Math.max(pWidth, 260), mainWindowWidth - 50)
@@ -81,15 +105,15 @@ ResizeablePage {
         if (root.state === "hidden") {
             root.transcriptModel.clearSubtitle()
             subtitleMenu.loadedTrackId = 0
+            root.m_mpv.forceActiveFocus()
         }
     }
 
     Connections {
-        target: root.transcriptModel
+        target: root.transcriptProxyModel
         function onParsingFinished(lastIndex) {
             Qt.callLater(transcriptView.positionViewAtIndex, lastIndex, ListView.Beginning)
         }
-
     }
 
     header: ToolBar {
@@ -182,7 +206,28 @@ ResizeablePage {
                 }
             }
 
+            ComboBox {
+                model: root.transcriptModel.styles
+                visible: count > 0
+
+                onActivated: function(index) {
+                    let filter = index === 0 ? "" : displayText
+                    root.transcriptStylesProxyModel.filterString = filter
+                }
+
+                ToolTip{
+                    text: KI18n.i18nc("@info:tooltip", "ASS subtitle styles")
+                }
+            }
+
             Kirigami.SearchField {
+                delaySearch: true
+
+                onTextChanged: {
+                    root.transcriptProxyModel.searchText = text
+                    transcriptView.positionViewAtIndex(transcriptView.currentIndex, ListView.Beginning)
+                }
+
                 Layout.fillWidth: true
             }
         }
@@ -205,10 +250,10 @@ ResizeablePage {
                 id: transcriptView
 
                 // buffer is required for animations. Jumping from N to N+1 animates, but N to -1 to N+1 breaks.
-                // transcriptModel.currentIndex is -1 when no subtitle is displayed
-                property int currentIndexBuffer: root.transcriptModel.currentIndex
+                // transcriptProxyModel.currentRow is -1 when no subtitle is displayed
+                property int currentIndexBuffer: root.transcriptProxyModel.currentRow
 
-                model: root.transcriptModel
+                model: root.transcriptStylesProxyModel
                 reuseItems: true
                 spacing: 1
                 highlightFollowsCurrentItem: SubtitlesSettings.transcriptFollowCurrentSubtitle

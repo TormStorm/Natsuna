@@ -15,7 +15,7 @@ struct SubtitleLine;
 class SubtitleParser;
 
 struct EndTime {
-    int index;
+    int row;
     double endTime;
 };
 
@@ -30,6 +30,7 @@ public:
 
     enum Roles {
         TextRole = Qt::UserRole,
+        StyleRole,
         SplittedTextRole,
         DurationRole,
         StartTimeRole,
@@ -43,28 +44,33 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_PROPERTY(int currentIndex READ currentIndex NOTIFY currentIndexChanged)
-    int currentIndex();
+    Q_PROPERTY(QStringList styles READ styles WRITE setStyles NOTIFY stylesChanged FINAL)
+    Q_SIGNAL void stylesChanged();
+    QStringList styles() const;
+    void setStyles(const QStringList &newStyles);
 
+    int currentRow() const;
+    bool isCurrentEndTime(int row) const;
     Q_INVOKABLE void loadSubtitle(QUrl filePath, int streamIndex, double position);
     Q_INVOKABLE void clearSubtitle();
     Q_INVOKABLE void updateCurrentEndTimes(double time);
+    Q_INVOKABLE void cancelParsing();
 
 Q_SIGNALS:
-    void currentIndexChanged();
-    void parsingFinished(int index);
+    void currentRowChanged();
+    void parsingFinished(int row);
 
 private:
     void addItem(const SubtitleLine &item, const int transcriptModelVersion);
-    void appendEndTime(int index, double endTime);
-    void prependEndTime(int index, double endTime);
-    void removeEndTime(int index);
+    void appendEndTime(int row, double endTime);
+    void prependEndTime(int row, double endTime);
+    void removeEndTime(int endTimeIndex);
     void clearEndTimes();
     void binarySearchEndTimes(double time);
 
-    // Indexes for currently displayed subtitle lines in the m_transcript.
+    // Row numbers for currently displayed subtitle lines in the m_transcript.
     QList<EndTime> m_currentEndTimes;
-    int m_lastIndex{0};
+    int m_lastRow{0};
     double m_lastTimePosition{-1.0};
     // Index for subtitle stream in the list of loaded subtitles
     int m_streamIndex{-1};
@@ -76,6 +82,7 @@ private:
     std::atomic<int> m_transcriptModelVersion{0};
     // abort worker threads if this value is true
     std::atomic<bool> m_cancelRequested{false};
+    QStringList m_styles;
 };
 
 #endif // TRANSCRIPTMODEL_H

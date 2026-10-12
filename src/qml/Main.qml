@@ -8,7 +8,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Dialogs
 
 import org.kde.ki18n
@@ -268,14 +267,6 @@ ApplicationWindow {
             anchors.fill: parent
             maxWidth: mpv.width
         }
-
-        SelectActionPopup {
-            id: triggerActionPopup
-
-            onActionSelected: function(actionName) {
-                HarunaApp.actions[actionName].trigger()
-            }
-        }
     }
 
     // extra space outside the playlist so that the playlist is not closed
@@ -302,11 +293,7 @@ ApplicationWindow {
         Connections {
             target: actions
             function onToggleTranscript() {
-                if (transcript.state === "visible") {
-                    transcript.state = "hidden"
-                } else {
-                    transcript.state = "visible"
-                }
+                transcript.toggle()
             }
         }
 
@@ -399,34 +386,41 @@ ApplicationWindow {
         m_osd: osd
         m_footer: footerItem
         m_settingsLoader: settingsLoader
-        m_triggerActionPopup: triggerActionPopup
         m_openUrlPopup: openUrlPopup
 
         onOpenFileDialog: fileDialog.open()
         onOpenSubtitleDialog: subtitlesFileDialog.open()
     }
 
-    RowLayout {
-        width: appWindow.width * 0.8 > Kirigami.Units.gridUnit * 50
-               ? Kirigami.Units.gridUnit * 50
-               : appWindow.width * 0.8
-        anchors.centerIn: parent
+    Component {
+        id: messageBoxComponent
 
         Kirigami.InlineMessage {
             id: messageBox
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            width: Math.min(Kirigami.Units.gridUnit * 50, appWindow.width * 0.8)
+            anchors.centerIn: parent
+
             type: Kirigami.MessageType.Error
             showCloseButton: true
 
-            Connections {
-                target: MiscUtils
-                function onError(message) {
-                    messageBox.visible = true
-                    messageBox.text = message
+            onVisibleChanged: {
+                if (!visible) {
+                    destroy()
                 }
             }
+        }
+    }
+
+    Connections {
+        id: miscUtilsOnErrorConnection
+        target: MiscUtils
+        function onError(message) {
+            const item = messageBoxComponent.createObject(appWindow)
+            const messageBox = item as Kirigami.InlineMessage
+
+            messageBox.visible = true
+            messageBox.text = message
         }
     }
 

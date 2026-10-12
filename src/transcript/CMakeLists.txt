@@ -19,6 +19,8 @@ qt_add_qml_module(transcript
         subtitleparser.cpp
         transcriptmodel.h
         transcriptmodel.cpp
+        transcriptproxymodel.h
+        transcriptproxymodel.cpp
 )
 
 target_include_directories(transcript
@@ -31,6 +33,7 @@ target_link_libraries(transcript PRIVATE
     Qt6::Gui
 
     KF6::FileMetaData
+    KF6::I18n
 
     ${AVCODEC_LIBRARIES}
     ${AVFORMAT_LIBRARIES}
