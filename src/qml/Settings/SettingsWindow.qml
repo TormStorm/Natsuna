@@ -100,6 +100,8 @@ Loader {
 
     function openSettingPage(page: int) : void {
         if (!root.active) {
+            // choose the page first so the window builds only that page
+            root.activePage = page
             root.active = true
             root.loaded.connect(function() {
                 root.openSettingPage(page)
@@ -163,7 +165,7 @@ Loader {
             stack.push(`${path}/DebugSettings.qml`, {m_mpv: root.m_mpv})
             break
         case SettingsWindow.Page.About:
-            stack.push(aboutPage)
+            stack.push(settingsWindow.aboutPageComponent)
             break
         }
     }
@@ -184,14 +186,6 @@ Loader {
     onActivePageChanged: loadPage()
     onLoaded: loadPage()
 
-    Component {
-        id: aboutPage
-
-        Kirigami.AboutPage {
-            aboutData: HarunaApp.aboutData()
-        }
-    }
-
     active: false
     asynchronous: true
     sourceComponent: Kirigami.ApplicationWindow {
@@ -199,6 +193,7 @@ Loader {
 
         // kept for pages that build paths from it (e.g. custom commands)
         property string settingsPath: "qrc:/qt/qml/org/kde/haruna/qml/Settings"
+        readonly property Component aboutPageComponent: aboutPage
 
         width: Kirigami.Units.gridUnit * 52
         height: Kirigami.Units.gridUnit * 38
@@ -285,6 +280,15 @@ Loader {
                     model: root.showAllPages ? root.extraPages : []
                     delegate: PageDelegate {}
                 }
+            }
+        }
+
+        // Defined inside the window: Kirigami.AboutPage needs its applicationWindow
+        Component {
+            id: aboutPage
+
+            Kirigami.AboutPage {
+                aboutData: HarunaApp.aboutData()
             }
         }
 
