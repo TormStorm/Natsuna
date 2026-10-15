@@ -177,6 +177,7 @@ qt_add_qml_module(haruna
 
         qml/Settings/DatabaseSettings.qml
         qml/Settings/GeneralSettings.qml
+        qml/Settings/InputSettings.qml
         qml/Settings/PlaybackSettings.qml
         qml/Settings/VideoSettings.qml
         qml/Settings/AudioSettings.qml

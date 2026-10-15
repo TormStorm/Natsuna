@@ -19,7 +19,6 @@ import org.kde.haruna
 import org.kde.haruna.settings
 
 // Natsuna: the Preferences window.
-// The sidebar shows the everyday pages; the rest sit under "Show all settings".
 Loader {
     id: root
 
@@ -39,28 +38,32 @@ Loader {
         CustomCommands,
         Database,
         Debug,
-        About
+        About,
+        Input   // Natsuna: Shortcuts + Mouse
     }
 
     // sidebar order
-    readonly property var corePages: [
+    readonly property var pages: [
         SettingsWindow.Page.General,
+        SettingsWindow.Page.Playback,
         SettingsWindow.Page.Audio,
         SettingsWindow.Page.Video,
         SettingsWindow.Page.Subtitles,
-        SettingsWindow.Page.Shortcuts,
-        SettingsWindow.Page.About
-    ]
-    readonly property var extraPages: [
-        SettingsWindow.Page.Playback,
         SettingsWindow.Page.Playlist,
-        SettingsWindow.Page.Mouse,
+        SettingsWindow.Page.Input,
         SettingsWindow.Page.CustomCommands,
         SettingsWindow.Page.Database,
-        SettingsWindow.Page.Debug
+        SettingsWindow.Page.Debug,
+        SettingsWindow.Page.About
     ]
-    readonly property bool showAllPages: GeneralSettings.showAllPreferences
-                                         || root.extraPages.includes(root.activePage)
+
+    // Haruna's separate Shortcuts and Mouse pages now live on the Input page
+    function normalizedPage(page: int) : int {
+        if (page === SettingsWindow.Page.Shortcuts || page === SettingsWindow.Page.Mouse) {
+            return SettingsWindow.Page.Input
+        }
+        return page
+    }
 
     function pageText(page: int) : string {
         switch (page) {
@@ -70,8 +73,7 @@ Loader {
         case SettingsWindow.Page.Audio: return KI18n.i18nc("@action", "Audio")
         case SettingsWindow.Page.Subtitles: return KI18n.i18nc("@action", "Subtitles")
         case SettingsWindow.Page.Playlist: return KI18n.i18nc("@action", "Playlist")
-        case SettingsWindow.Page.Mouse: return KI18n.i18nc("@action", "Mouse")
-        case SettingsWindow.Page.Shortcuts: return KI18n.i18nc("@action", "Shortcuts")
+        case SettingsWindow.Page.Input: return KI18n.i18nc("@action", "Input")
         case SettingsWindow.Page.CustomCommands: return KI18n.i18nc("@action", "Custom Commands")
         case SettingsWindow.Page.Database: return KI18n.i18nc("@action", "Database")
         case SettingsWindow.Page.Debug: return KI18n.i18nc("@action", "Debug")
@@ -88,8 +90,7 @@ Loader {
         case SettingsWindow.Page.Audio: return "player-volume"
         case SettingsWindow.Page.Subtitles: return "add-subtitle"
         case SettingsWindow.Page.Playlist: return "view-media-playlist"
-        case SettingsWindow.Page.Mouse: return "input-mouse"
-        case SettingsWindow.Page.Shortcuts: return "configure-shortcuts"
+        case SettingsWindow.Page.Input: return "input-keyboard"
         case SettingsWindow.Page.CustomCommands: return "dialog-scripts"
         case SettingsWindow.Page.Database: return "server-database"
         case SettingsWindow.Page.Debug: return "tools-report-bug"
@@ -99,6 +100,7 @@ Loader {
     }
 
     function openSettingPage(page: int) : void {
+        page = root.normalizedPage(page)
         if (!root.active) {
             // choose the page first so the window builds only that page
             root.activePage = page
@@ -148,11 +150,10 @@ Loader {
         case SettingsWindow.Page.Playlist:
             stack.push(`${path}/PlaylistSettings.qml`)
             break
-        case SettingsWindow.Page.Mouse:
-            stack.push(`${path}/MouseSettings.qml`)
-            break
+        case SettingsWindow.Page.Input:
         case SettingsWindow.Page.Shortcuts:
-            stack.push(`${path}/ShortcutsSettings.qml`)
+        case SettingsWindow.Page.Mouse:
+            stack.push(`${path}/InputSettings.qml`)
             break
         case SettingsWindow.Page.CustomCommands:
             stack.push(`${path}/CustomCommandsSettings.qml`,
@@ -247,37 +248,7 @@ Loader {
                 }
 
                 Repeater {
-                    model: root.corePages
-                    delegate: PageDelegate {}
-                }
-
-                Kirigami.Separator {
-                    Layout.fillWidth: true
-                    Layout.topMargin: Kirigami.Units.smallSpacing
-                    Layout.bottomMargin: Kirigami.Units.smallSpacing
-                    Layout.leftMargin: Kirigami.Units.largeSpacing
-                    Layout.rightMargin: Kirigami.Units.largeSpacing
-                }
-
-                ItemDelegate {
-                    text: root.showAllPages
-                          ? KI18n.i18nc("@action", "Show fewer settings")
-                          : KI18n.i18nc("@action", "Show all settings")
-                    icon.name: root.showAllPages ? "arrow-up" : "arrow-down"
-                    opacity: 0.8
-                    Layout.fillWidth: true
-                    onClicked: {
-                        const showAll = !root.showAllPages
-                        GeneralSettings.showAllPreferences = showAll
-                        GeneralSettings.save()
-                        if (!showAll && root.extraPages.includes(root.activePage)) {
-                            root.activePage = SettingsWindow.Page.General
-                        }
-                    }
-                }
-
-                Repeater {
-                    model: root.showAllPages ? root.extraPages : []
+                    model: root.pages
                     delegate: PageDelegate {}
                 }
             }

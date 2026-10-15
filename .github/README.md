@@ -36,7 +36,7 @@ Natsuna installs alongside Haruna. It has its own name, app-menu entry, binary (
 | Video | Fullscreen, Zoom, Deinterlace, Take Snapshot |
 | Subtitle | Add Subtitle File, Sub Track |
 | Tools | Customize Shortcuts, Preferences |
-| View | Playlist, Always on Top, Menu Bar, Toolbar |
+| View | Playlist, Always on Top, Toolbar |
 | Help | About, Report a Bug, Support Haruna Development |
 
 The right-click menu on the video uses the same menus.
@@ -50,10 +50,10 @@ They all still work through their keyboard shortcuts, and you can find and rebin
 **Preferences.** The settings window has been rebuilt and renamed Preferences:
 - Every page uses the same layout: grouped cards with the setting on the left and its control on the right, so nothing jumps around between pages.
 - Options that depend on another one are indented under it and greyed out when they don't apply.
-- The sidebar shows the everyday pages: General, Audio, Video, Subtitles, Shortcuts and About.
-- Playback, Playlist, Mouse, Custom Commands, Database and Debug are tucked under **Show all settings**, which is remembered.
+- Pages, in order: General, Playback, Audio, Video, Subtitles, Playlist, Input, Custom Commands, Database, Debug and About.
+- **Input** combines Haruna's Shortcuts and Mouse pages: a searchable list of keyboard shortcuts, and the mouse button actions with buttons to change, remove or add them.
 
-**Logo.** Natsuna has its own icon: an "N" made of film strip on a warm summer gradient (*natsu* means summer, a nod to Haruna's *haru*, spring). The same film-strip "N" is shown when nothing is playing, with its sprocket holes sliding while a stream loads.
+**Logo.** Natsuna has its own icon in the same dark, flat style as Haruna's: a light "N" made of film strip on a charcoal tile (*natsu* means summer, a nod to Haruna's *haru*, spring). The same film-strip "N" is shown when nothing is playing, with its sprocket holes sliding while a stream loads.
 
 **Always on Top.** View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11. It's remembered between sessions.
 
@@ -78,7 +78,7 @@ They all still work through their keyboard shortcuts, and you can find and rebin
 | Ctrl+N | Open network stream |
 | Ctrl+P | Preferences |
 
-All shortcuts and mouse actions can be changed under **Tools → Preferences** (Shortcuts, or Mouse under Show all settings).
+All shortcuts and mouse actions can be changed under **Tools → Preferences → Input**. The menu bar can be hidden under Preferences → General (or with Ctrl+M).
 
 ## Building
 

@@ -40,11 +40,6 @@ Menu {
     MenuSeparator {}
 
     NatsunaToggleItem {
-        action: HarunaApp.actions.toggleMenuBarAction
-        text: KI18n.i18nc("@action:inmenu", "Menu Bar")
-        isOn: GeneralSettings.showMenuBar
-    }
-    NatsunaToggleItem {
         action: HarunaApp.actions.toggleHeaderAction
         text: KI18n.i18nc("@action:inmenu", "Toolbar")
         isOn: GeneralSettings.showHeader
