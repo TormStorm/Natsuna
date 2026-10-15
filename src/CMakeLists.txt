@@ -72,6 +72,12 @@ qt_add_resources(haruna animations
 # even when running from the build folder (icon not installed)
 qt_add_resources(haruna natsuna_logo
     FILES
+        ../data/icons/16-apps-natsuna.png
+        ../data/icons/22-apps-natsuna.png
+        ../data/icons/32-apps-natsuna.png
+        ../data/icons/48-apps-natsuna.png
+        ../data/icons/64-apps-natsuna.png
+        ../data/icons/128-apps-natsuna.png
         ../data/icons/256-apps-natsuna.png
 )
 

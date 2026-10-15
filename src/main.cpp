@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QIcon>
+#include <QSize>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlEngine>
@@ -50,7 +51,14 @@ int main(int argc, char *argv[])
     QIcon::setFallbackThemeName(u"breeze"_s);
 
     QApplication qApplication(argc, argv);
-    QApplication::setWindowIcon(QIcon::fromTheme(u"natsuna"_s, QIcon(u":/data/icons/256-apps-natsuna.png"_s)));
+    // Natsuna: use the bundled icon images rather than the theme icon name.
+    // With a name, the window manager resolves the icon itself and can show a
+    // stale cached version; with images the title bar always shows this icon.
+    QIcon windowIcon;
+    for (const int size : {16, 22, 32, 48, 64, 128, 256}) {
+        windowIcon.addFile(u":/data/icons/%1-apps-natsuna.png"_s.arg(size), QSize(size, size));
+    }
+    QApplication::setWindowIcon(windowIcon);
 
     bool handledByQPT = INITIAL_STYLE != QQuickStyle::name();
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE") && !handledByQPT) {
