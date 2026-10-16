@@ -27,6 +27,17 @@ Menu {
 
     MenuSeparator {}
 
+    MenuItem {
+        action: HarunaApp.actions.toggleFullscreenAction
+        text: KI18n.i18nc("@action:inmenu", "Fullscreen")
+    }
+
+    NatsunaToggleItem {
+        action: HarunaApp.actions.toggleAutoHideInterfaceAction
+        text: KI18n.i18nc("@action:inmenu", "Auto-hide Interface")
+        isOn: GeneralSettings.autoHideInterface
+    }
+
     NatsunaToggleItem {
         text: KI18n.i18nc("@action:inmenu", "Always on Top")
         icon.name: "window-keep-above"
@@ -35,13 +46,5 @@ Menu {
             GeneralSettings.alwaysOnTop = !GeneralSettings.alwaysOnTop
             GeneralSettings.save()
         }
-    }
-
-    MenuSeparator {}
-
-    NatsunaToggleItem {
-        action: HarunaApp.actions.toggleHeaderAction
-        text: KI18n.i18nc("@action:inmenu", "Toolbar")
-        isOn: GeneralSettings.showHeader
     }
 }

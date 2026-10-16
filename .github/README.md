@@ -33,10 +33,10 @@ Natsuna installs alongside Haruna. It has its own name, app-menu entry, binary (
 | Media | Open File, Open Network Stream, Open Recent Media, Quit |
 | Playback | Chapter, Speed, Jump Forward/Backward, Play/Pause, Stop, Previous, Next |
 | Audio | Audio Track, Increase/Decrease Volume, Mute |
-| Video | Fullscreen, Zoom, Deinterlace, Take Snapshot |
+| Video | Zoom, Deinterlace, Take Snapshot |
 | Subtitle | Add Subtitle File, Sub Track |
 | Tools | Customize Shortcuts, Preferences |
-| View | Playlist, Always on Top, Toolbar |
+| View | Playlist, Fullscreen, Auto-hide Interface, Always on Top |
 | Help | About, Report a Bug, Support Haruna Development |
 
 The right-click menu on the video uses the same menus.
@@ -54,6 +54,8 @@ They all still work through their keyboard shortcuts, and you can find and rebin
 - **Input** combines Haruna's Shortcuts and Mouse pages: a searchable list of keyboard shortcuts, and the mouse button actions with buttons to change, remove or add them.
 
 **Logo.** Natsuna has its own icon in the same dark, flat style as Haruna's: a light "N" made of film strip on a charcoal tile (*natsu* means summer, a nod to Haruna's *haru*, spring). The same film-strip "N" is shown when nothing is playing, with its sprocket holes sliding while a stream loads.
+
+**Auto-hide interface.** View → Auto-hide Interface (Ctrl+H) hides the menu bar, toolbar and control bar a couple of seconds after the mouse stops moving, so only the video shows. It's handy with Always on Top for keeping a small video over other windows. Move the mouse over the player and everything fades back in, drawn over the video, so the picture never jumps or resizes. The controls stay up while you're using a menu. It's also in Preferences → General and is remembered between sessions.
 
 **Always on Top.** View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11. It's remembered between sessions.
 
@@ -74,6 +76,7 @@ They all still work through their keyboard shortcuts, and you can find and rebin
 | V / Shift+V | Next / previous subtitle track |
 | B / Shift+B | Next / previous audio track |
 | L | A–B loop |
+| Ctrl+H | Auto-hide interface on / off |
 | Ctrl+L | Show / hide playlist |
 | Ctrl+N | Open network stream |
 | Ctrl+P | Preferences |

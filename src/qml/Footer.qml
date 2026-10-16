@@ -40,8 +40,14 @@ Item {
     property alias progressBar: progressBar
     property string footerState: isFloating ? "hidden" : "visible"
     property bool isFullScreen: root.Window.window?.visibility === Window.FullScreen
+    // Auto-hide mode (View menu): all controls float over the video and hide together
+    property bool autoHideWindowed: GeneralSettings.autoHideInterface && !isFullScreen
     // Floating = drawn over the video instead of below it
     property bool isFloating: isFullScreen || GeneralSettings.footerStyle === "floating"
+                              || GeneralSettings.autoHideInterface
+    // Set by the window while the top controls (auto-hide mode) are in use
+    property bool holdVisible: false
+    readonly property bool controlsShown: footerState === "visible"
     property bool isSmallSize: width < 600
     property int buttonSize: isSmallSize ? Kirigami.Units.iconSizes.small : Kirigami.Units.iconSizes.smallMedium
     // How long the floating controls stay after the mouse stops moving
@@ -50,6 +56,11 @@ Item {
     implicitWidth: Window.window.contentItem.width
     // The floating controller sits flush against the bottom of the screen
     implicitHeight: footer.height
+
+    // Show the floating controls (they hide again after hideDelay)
+    function showControls() : void {
+        footer.showFloating()
+    }
 
     onIsFloatingChanged: {
         if (root.isFloating) {
@@ -133,7 +144,7 @@ Item {
                     return
                 }
                 if (footer.hovered || hamburgerMenu.isOpen || progressBar.chaptersPopupIsOpen
-                        || volumeSlider.pressed) {
+                        || volumeSlider.pressed || root.holdVisible) {
                     // still in use, check again later
                     hideFooterTimer.restart()
                     return
@@ -227,7 +238,9 @@ Item {
                     m_menuBarLoader: root.m_menuBarLoader
 
                     position: HamburgerMenu.Position.Footer
+                    // not needed when the auto-hide top strip already shows a menu bar or toolbar
                     visible: root.m_menuBarLoader.state === "hidden" && !root.m_header.visible
+                             && !(root.autoHideWindowed && (GeneralSettings.showMenuBar || GeneralSettings.showHeader))
                     icon.width: root.buttonSize
                     icon.height: root.buttonSize
                 }

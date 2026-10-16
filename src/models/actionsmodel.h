@@ -131,6 +131,7 @@ Q_SIGNALS:
     void toggleFullscreenAction();
     void toggleMenuBarAction();
     void toggleHeaderAction();
+    void toggleAutoHideInterfaceAction(); // Natsuna
     void togglePlaylistAction();
     void toggleTranscriptAction();
     void videoPanXLeftAction();

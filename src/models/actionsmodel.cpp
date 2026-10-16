@@ -431,6 +431,15 @@ ActionsModel::ActionsModel(QObject *parent)
     action.name = u"toggleHeaderAction"_s;
     action.text = i18nc("@action", "Toggle Header");
     action.iconName = QString();
+    action.defaultShortcut = Qt::CTRL | Qt::SHIFT | Qt::Key_H;
+    action.shortcut = getShortcut(action.name, action.defaultShortcut);
+    action.description = QString{};
+    m_actions << action;
+
+    // Natsuna: hide the menu bar, toolbar and controls until the mouse moves
+    action.name = u"toggleAutoHideInterfaceAction"_s;
+    action.text = i18nc("@action", "Auto-hide Interface");
+    action.iconName = u"view-hidden"_s;
     action.defaultShortcut = Qt::CTRL | Qt::Key_H;
     action.shortcut = getShortcut(action.name, action.defaultShortcut);
     action.description = QString{};

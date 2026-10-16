@@ -25,10 +25,14 @@ ToolBar {
     property bool isSmallSize: width < 600
     property int buttonSize: isSmallSize ? Kirigami.Units.iconSizes.small : Kirigami.Units.iconSizes.smallMedium
 
+    // Natsuna: true for the copy drawn over the video in auto-hide mode
+    property bool inOverlay: false
+
     position: ToolBar.Header
     state: {
         const mainWindow = Window.window as Main
-        if (!mainWindow.isFullScreen() && GeneralSettings.showHeader) {
+        const autoHideOk = root.inOverlay === GeneralSettings.autoHideInterface
+        if (!mainWindow.isFullScreen() && GeneralSettings.showHeader && autoHideOk) {
             return "visible"
         } else {
             return "hidden"
@@ -51,7 +55,8 @@ ToolBar {
             m_menuBarLoader: root.m_menuBarLoader
 
             position: HamburgerMenu.Position.Header
-            visible: !root.m_menuBarLoader.visible || root.m_menuBarLoader.isShowAnimationRunning
+            visible: (!root.m_menuBarLoader.visible || root.m_menuBarLoader.isShowAnimationRunning)
+                     && !(root.inOverlay && GeneralSettings.showMenuBar)
 
             icon.width: root.buttonSize
             icon.height: root.buttonSize

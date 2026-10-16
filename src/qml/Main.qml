@@ -363,6 +363,78 @@ ApplicationWindow {
         m_settingsLoader: settingsLoader
     }
 
+    // Natsuna: auto-hide mode (View menu). The menu bar and toolbar are drawn
+    // over the top of the video and fade in and out together with the floating
+    // control bar, so the video can use the whole window.
+    Item {
+        id: autoHideTopBar
+
+        readonly property bool active: GeneralSettings.autoHideInterface && !appWindow.isFullScreen()
+                                       && (GeneralSettings.showMenuBar || GeneralSettings.showHeader)
+        readonly property bool busy: topBarHover.hovered || overlayMenuBar.anyMenuOpen
+
+        anchors.top: appWindow.contentItem.top
+        anchors.left: appWindow.contentItem.left
+        anchors.right: appWindow.contentItem.right
+        height: topBarColumn.implicitHeight
+        visible: active && opacity > 0
+        opacity: active && footerItem.controlsShown ? 1 : 0
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        HoverHandler {
+            id: topBarHover
+        }
+
+        Column {
+            id: topBarColumn
+
+            width: parent.width
+
+            MenuBar {
+                id: overlayMenuBar
+
+                readonly property bool anyMenuOpen: overlayMediaMenu.visible || overlayPlaybackMenu.visible
+                                                    || overlayAudioMenu.visible || overlayVideoMenu.visible
+                                                    || overlaySubtitleMenu.visible || overlayToolsMenu.visible
+                                                    || overlayViewMenu.visible || overlayHelpMenu.visible
+
+                width: parent.width
+                visible: GeneralSettings.showMenuBar
+                hoverEnabled: true
+                Kirigami.Theme.colorSet: Kirigami.Theme.Header
+
+                NatsunaMediaMenu { id: overlayMediaMenu }
+                NatsunaPlaybackMenu { id: overlayPlaybackMenu; m_mpv: mpv }
+                NatsunaAudioMenu { id: overlayAudioMenu; m_mpv: mpv }
+                NatsunaVideoMenu { id: overlayVideoMenu }
+                NatsunaSubtitleMenu { id: overlaySubtitleMenu; m_mpv: mpv }
+                NatsunaToolsMenu { id: overlayToolsMenu; m_settingsLoader: settingsLoader }
+                NatsunaViewMenu { id: overlayViewMenu }
+                NatsunaHelpMenu { id: overlayHelpMenu }
+            }
+
+            Header {
+                width: parent.width
+                inOverlay: true
+                m_mpv: mpv
+                m_menuBarLoader: menuBarLoader
+                m_settingsLoader: settingsLoader
+            }
+        }
+    }
+
+    Binding {
+        target: footerItem
+        property: "holdVisible"
+        value: autoHideTopBar.active && autoHideTopBar.busy
+    }
+
     // Natsuna: Always on Top (View menu)
     Connections {
         target: GeneralSettings

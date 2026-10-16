@@ -31,7 +31,8 @@ Loader {
     asynchronous: !GeneralSettings.showMenuBar
     state: {
         const mainWindow = Window.window as Main
-        if (!mainWindow.isFullScreen() && GeneralSettings.showMenuBar) {
+        // Natsuna: in auto-hide mode the menu bar is drawn over the video instead
+        if (!mainWindow.isFullScreen() && GeneralSettings.showMenuBar && !GeneralSettings.autoHideInterface) {
             return "visible"
         } else {
             return "hidden"

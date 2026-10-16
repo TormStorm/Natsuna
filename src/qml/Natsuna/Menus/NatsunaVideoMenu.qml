@@ -19,13 +19,6 @@ Menu {
 
     title: KI18n.i18nc("@title:menu", "&Video")
 
-    MenuItem {
-        action: HarunaApp.actions.toggleFullscreenAction
-        text: KI18n.i18nc("@action:inmenu", "Fullscreen")
-    }
-
-    MenuSeparator {}
-
     Menu {
         title: KI18n.i18nc("@title:menu", "Zoom")
 

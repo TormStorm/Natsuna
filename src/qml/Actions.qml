@@ -358,6 +358,11 @@ Item {
             GeneralSettings.save()
         }
 
+        function onToggleAutoHideInterfaceAction() {
+            GeneralSettings.autoHideInterface = !GeneralSettings.autoHideInterface
+            GeneralSettings.save()
+        }
+
         function onTogglePlaylistAction() {
             root.togglePlaylist()
         }

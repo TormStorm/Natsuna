@@ -172,6 +172,19 @@ SettingsBasePage {
             }
 
             PrefRow {
+                title: KI18n.i18nc("@option:check", "Auto-hide interface")
+                description: KI18n.i18nc("@info", "Hide the menu bar, toolbar and controls when the mouse is still, so only the video shows. Move the mouse over the player to bring them back. Ctrl+H toggles this.")
+
+                Switch {
+                    checked: GeneralSettings.autoHideInterface
+                    onToggled: {
+                        GeneralSettings.autoHideInterface = checked
+                        GeneralSettings.save()
+                    }
+                }
+            }
+
+            PrefRow {
                 title: KI18n.i18nc("@label:listbox", "Control bar")
                 description: KI18n.i18nc("@info", "“Floating” draws the controls over the video and hides them when the mouse is still.")
 
