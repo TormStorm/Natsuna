@@ -221,6 +221,19 @@ ApplicationWindow {
 
         playlistsManager: playlist.manager
 
+        // Natsuna: in auto-hide mode the window has no title bar, so the
+        // video itself can be dragged to move the window
+        DragHandler {
+            target: null
+            enabled: appWindow.natsunaFrameless
+            acceptedButtons: Qt.LeftButton
+            onActiveChanged: {
+                if (active) {
+                    appWindow.startSystemMove()
+                }
+            }
+        }
+
         width: appWindow.contentItem.width
         height: appWindow.isFullScreen()
                 ? appWindow.contentItem.height
@@ -391,6 +404,17 @@ ApplicationWindow {
             id: topBarHover
         }
 
+        // drag the strip (menu bar or toolbar) to move the window, like a title bar
+        DragHandler {
+            target: null
+            acceptedButtons: Qt.LeftButton
+            onActiveChanged: {
+                if (active) {
+                    appWindow.startSystemMove()
+                }
+            }
+        }
+
         Column {
             id: topBarColumn
 
@@ -427,6 +451,90 @@ ApplicationWindow {
                 m_settingsLoader: settingsLoader
             }
         }
+    }
+
+    // Natsuna: no title bar and frame while auto-hide mode is on (windowed)
+    readonly property bool natsunaFrameless: GeneralSettings.autoHideInterface
+                                             && appWindow.visibility !== Window.FullScreen
+
+    function applyNatsunaFrame() : void {
+        const frameless = appWindow.natsunaFrameless
+        const hasFlag = (appWindow.flags & Qt.FramelessWindowHint) !== 0
+        if (frameless !== hasFlag) {
+            appWindow.flags = frameless ? (appWindow.flags | Qt.FramelessWindowHint)
+                                        : (appWindow.flags & ~Qt.FramelessWindowHint)
+        }
+    }
+
+    onNatsunaFramelessChanged: applyNatsunaFrame()
+
+    // Without a frame the window manager offers no resize borders, so provide
+    // invisible grab zones along the edges and corners
+    component ResizeZone: MouseArea {
+        property int edges: 0
+
+        z: 1000
+        enabled: appWindow.natsunaFrameless
+        visible: enabled
+        hoverEnabled: true
+        acceptedButtons: Qt.LeftButton
+        cursorShape: {
+            const h = (edges & Qt.LeftEdge) || (edges & Qt.RightEdge)
+            const v = (edges & Qt.TopEdge) || (edges & Qt.BottomEdge)
+            if (h && v) {
+                const tlbr = (edges === (Qt.TopEdge | Qt.LeftEdge)) || (edges === (Qt.BottomEdge | Qt.RightEdge))
+                return tlbr ? Qt.SizeFDiagCursor : Qt.SizeBDiagCursor
+            }
+            return h ? Qt.SizeHorCursor : Qt.SizeVerCursor
+        }
+        onPressed: appWindow.startSystemResize(edges)
+    }
+
+    readonly property int natsunaResizeMargin: Kirigami.Units.smallSpacing * 1.5
+
+    ResizeZone {
+        edges: Qt.LeftEdge
+        anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+        width: appWindow.natsunaResizeMargin
+    }
+    ResizeZone {
+        edges: Qt.RightEdge
+        anchors { right: parent.right; top: parent.top; bottom: parent.bottom }
+        width: appWindow.natsunaResizeMargin
+    }
+    ResizeZone {
+        edges: Qt.TopEdge
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+        height: appWindow.natsunaResizeMargin
+    }
+    ResizeZone {
+        edges: Qt.BottomEdge
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+        height: appWindow.natsunaResizeMargin
+    }
+    ResizeZone {
+        edges: Qt.TopEdge | Qt.LeftEdge
+        anchors { top: parent.top; left: parent.left }
+        width: appWindow.natsunaResizeMargin * 3
+        height: appWindow.natsunaResizeMargin * 3
+    }
+    ResizeZone {
+        edges: Qt.TopEdge | Qt.RightEdge
+        anchors { top: parent.top; right: parent.right }
+        width: appWindow.natsunaResizeMargin * 3
+        height: appWindow.natsunaResizeMargin * 3
+    }
+    ResizeZone {
+        edges: Qt.BottomEdge | Qt.LeftEdge
+        anchors { bottom: parent.bottom; left: parent.left }
+        width: appWindow.natsunaResizeMargin * 3
+        height: appWindow.natsunaResizeMargin * 3
+    }
+    ResizeZone {
+        edges: Qt.BottomEdge | Qt.RightEdge
+        anchors { bottom: parent.bottom; right: parent.right }
+        width: appWindow.natsunaResizeMargin * 3
+        height: appWindow.natsunaResizeMargin * 3
     }
 
     Binding {
@@ -597,6 +705,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        applyNatsunaFrame() // Natsuna: auto-hide mode removes the frame
         HarunaApp.setupEventFilter(appWindow)
         HarunaApp.activateColorScheme(GeneralSettings.colorScheme)
 

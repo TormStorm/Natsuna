@@ -55,7 +55,7 @@ They all still work through their keyboard shortcuts, and you can find and rebin
 
 **Logo.** Natsuna has its own icon in the same dark, flat style as Haruna's: a light "N" made of film strip on a charcoal tile (*natsu* means summer, a nod to Haruna's *haru*, spring). The same film-strip "N" is shown when nothing is playing, with its sprocket holes sliding while a stream loads.
 
-**Auto-hide interface.** View → Auto-hide Interface (Ctrl+H) hides the menu bar, toolbar and control bar a couple of seconds after the mouse stops moving, so only the video shows. It's handy with Always on Top for keeping a small video over other windows. Move the mouse over the player and everything fades back in, drawn over the video, so the picture never jumps or resizes. The controls stay up while you're using a menu. It's also in Preferences → General and is remembered between sessions.
+**Auto-hide interface.** View → Auto-hide Interface (Ctrl+H) hides the menu bar, toolbar and control bar a couple of seconds after the mouse stops moving, so only the video shows. It's handy with Always on Top for keeping a small video over other windows. Move the mouse over the player and everything fades back in, drawn over the video, so the picture never jumps or resizes. The controls stay up while you're using a menu. The window's title bar and frame are hidden too (like KDE's "No Titlebar and Frame"). Drag the video or the top strip to move the window, and drag any edge or corner to resize it. It's also in Preferences → General and is remembered between sessions.
 
 **Always on Top.** View → Always on Top keeps the player above other windows. On KDE Plasma it uses KWin's own "Keep Above Others", so it works on Wayland as well as X11. It's remembered between sessions.
 
