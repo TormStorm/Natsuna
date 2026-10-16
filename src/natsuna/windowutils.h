@@ -26,8 +26,14 @@ public:
     // on both Wayland and X11. Elsewhere it falls back to Qt's stay-on-top hint.
     Q_INVOKABLE void setKeepAbove(QWindow *window, bool keepAbove);
 
+    // Hides the title bar and frame (auto-hide mode).
+    // On KDE Plasma this uses KWin's "No Titlebar and Frame", which applies
+    // immediately. Elsewhere it falls back to Qt's frameless window hint.
+    Q_INVOKABLE void setFrameless(QWindow *window, bool frameless);
+
 private:
-    bool setKeepAboveWithKWin(bool keepAbove);
+    // Runs a small KWin script; returns false when KWin isn't available
+    bool runKWinScript(const QString &name, const QString &body);
 };
 
 #endif // NATSUNA_WINDOWUTILS_H

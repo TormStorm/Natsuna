@@ -458,12 +458,16 @@ ApplicationWindow {
                                              && appWindow.visibility !== Window.FullScreen
 
     function applyNatsunaFrame() : void {
-        const frameless = appWindow.natsunaFrameless
-        const hasFlag = (appWindow.flags & Qt.FramelessWindowHint) !== 0
-        if (frameless !== hasFlag) {
-            appWindow.flags = frameless ? (appWindow.flags | Qt.FramelessWindowHint)
-                                        : (appWindow.flags & ~Qt.FramelessWindowHint)
-        }
+        // KWin's "No Titlebar and Frame" (applies immediately), or Qt's
+        // frameless hint on other desktops
+        NatsunaWindowUtils.setFrameless(appWindow, appWindow.natsunaFrameless)
+    }
+
+    Timer {
+        // at startup the window must be on screen before KWin can change it
+        interval: 500
+        running: appWindow.natsunaFrameless
+        onTriggered: appWindow.applyNatsunaFrame()
     }
 
     onNatsunaFramelessChanged: applyNatsunaFrame()
